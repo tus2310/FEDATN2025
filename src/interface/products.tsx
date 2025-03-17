@@ -6,7 +6,6 @@ export interface IVariant {
   quantity: number;
   basePrice: number;
   discount?: number;
-  
 }
 
 export interface Iproduct {
