@@ -19,7 +19,7 @@ const Register = (props: Props) => {
         setMessage("Đăng ký thất bại. Vui lòng thử lại.")
         setIsError(true)
       } else {
-        setMessage("Đăng ký thành công!")
+        setMessage("Dang nhap thành công!")
         setIsError(false)
       }
     } catch (error) {
