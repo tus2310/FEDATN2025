@@ -6,11 +6,10 @@ export interface IVariant {
   quantity: number;
   basePrice: number;
   discount?: number;
-  
 }
 
 export interface Iproduct {
-  _id: string;
+  _id: number; //
   masp: string;
   name: string;
   img: string[];
