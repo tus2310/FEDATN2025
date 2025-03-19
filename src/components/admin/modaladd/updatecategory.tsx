@@ -2,11 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Form, Input, message, notification } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { Icategory } from "../../../interface/category";
-import {
-  getAllCategories,
-  getCategoryByID,
-  updateCategory,
-} from "../../../service/category";
+import { getAllCategories, getCategoryByID, updateCategory } from "../../../service/category";
 
 type Props = {};
 

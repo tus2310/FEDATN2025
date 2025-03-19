@@ -48,7 +48,7 @@ const Addcategory = (props: Props) => {
         message.error("Tên danh mục đã tồn tại");
         return;
       }
-
+      
       const category = await addCategory(payload);
 
       if (category) {
