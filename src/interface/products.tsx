@@ -9,7 +9,7 @@ export interface IVariant {
 }
 
 export interface Iproduct {
-  _id: number; //
+  _id: string;
   masp: string;
   name: string;
   img: string[];
@@ -20,6 +20,7 @@ export interface Iproduct {
   variants: IVariant[]; // Không nên để tùy chọn (?)
   discountCode?: string; // Nếu không dùng thì bỏ luôn khỏi interface
   createdAt: string;
+  updatedAt: string;
 }
 
 export type IProductLite = Pick<
@@ -35,6 +36,7 @@ export type IProductLite = Pick<
   | "variants"
   | "discountCode"
   | "createdAt"
+  | "updatedAt"
 > & {
   price?: number;
   soLuong?: number;
