@@ -1,33 +1,33 @@
-import React, { useState } from 'react'
-import { NavLink } from 'react-router-dom'
-import { UserRegister } from '../../service/user'
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
+import { UserRegister } from "../../service/user";
 
-type Props = {}
+type Props = {};
 
 const Register = (props: Props) => {
-  const [name, setName] = useState<string>("")
-  const [email, setEmail] = useState<string>("")
-  const [password, setPassword] = useState<string>("")
-  const [message, setMessage] = useState<string>("")
-  const [isError, setIsError] = useState<boolean>(false)
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  // const [password, setPassword] = useState<string>("")
+  const [message, setMessage] = useState<string>("");
+  const [isError, setIsError] = useState<boolean>(false);
 
   const handleSubmit = async (e: any) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const data = await UserRegister({ name, email, password })
+      const data = await UserRegister({ name, email, password });
       if (data?.name === "Axioserror") {
-        setMessage("Đăng ký thất bại. Vui lòng thử lại.")
-        setIsError(true)
+        setMessage("Đăng ký thất bại. Vui lòng thử lại.");
+        setIsError(true);
       } else {
-        setMessage("Đăng kíthành công!")
-        setIsError(false)
+        setMessage("Đăng kíthành công!");
+        setIsError(false);
       }
     } catch (error) {
-      console.log(error)
-      setMessage("Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại.")
-      setIsError(true)
+      console.log(error);
+      setMessage("Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại.");
+      setIsError(true);
     }
-  }
+  };
 
   return (
     <>
@@ -40,7 +40,7 @@ const Register = (props: Props) => {
                   <h3 className="text-3xl font-extrabold">Đăng ký</h3>
                   <p className="text-sm mt-4 ">
                     Đã có tài khoản?{" "}
-                    <NavLink to={'/login'}>
+                    <NavLink to={"/login"}>
                       <span className="text-blue-600 font-semibold hover:underline ml-1 whitespace-nowrap">
                         Đăng nhập tại đây!
                       </span>
@@ -50,7 +50,9 @@ const Register = (props: Props) => {
                 {message && (
                   <div
                     className={`text-sm mb-4 p-2 rounded ${
-                      isError ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"
+                      isError
+                        ? "bg-red-100 text-red-600"
+                        : "bg-green-100 text-green-600"
                     }`}
                   >
                     {message}
@@ -63,7 +65,7 @@ const Register = (props: Props) => {
                       name="name"
                       type="text"
                       onChange={(e: any) => {
-                        setName(e.target.value)
+                        setName(e.target.value);
                       }}
                       className="w-full text-sm border-b border-gray-300 focus:border-[#333] px-2 py-3 outline-none"
                       placeholder="Mời nhập tên"
@@ -77,7 +79,7 @@ const Register = (props: Props) => {
                       name="email"
                       type="email"
                       onChange={(e: any) => {
-                        setEmail(e.target.value)
+                        setEmail(e.target.value);
                       }}
                       className="w-full text-sm border-b border-gray-300 focus:border-[#333] px-2 py-3 outline-none"
                       placeholder="Mời nhập email"
@@ -91,7 +93,7 @@ const Register = (props: Props) => {
                       name="password"
                       type="password"
                       onChange={(e: any) => {
-                        setPassword(e.target.value)
+                        setPassword(e.target.value);
                       }}
                       className="w-full text-sm border-b border-gray-300 focus:border-[#333] px-2 py-3 outline-none"
                       placeholder="Mời nhập mật khẩu"
@@ -119,7 +121,7 @@ const Register = (props: Props) => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;
