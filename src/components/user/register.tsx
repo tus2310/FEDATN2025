@@ -7,7 +7,7 @@ type Props = {};
 const Register = (props: Props) => {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  // const [password, setPassword] = useState<string>("")
+  const [password, setPassword] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [isError, setIsError] = useState<boolean>(false);
 
@@ -24,7 +24,7 @@ const Register = (props: Props) => {
       }
     } catch (error) {
       console.log(error);
-      setMessage("Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại.");
+      setMessage("Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại ok.");
       setIsError(true);
     }
   };
