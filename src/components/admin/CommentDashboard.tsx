@@ -42,25 +42,6 @@ const CommentDashboard = () => {
     fetchComments();
   }, []);
 
-  const handleDeleteComment = (id: number) => {
-    const updatedComments = comments.filter((comment) => comment.id !== id);
-    setComments(updatedComments);
-
-    const groupedComments: Record<string, Comment[]> = {};
-    updatedComments.forEach((comment) => {
-      if (!groupedComments[comment.productId])
-        groupedComments[comment.productId] = [];
-      groupedComments[comment.productId].push(comment);
-    });
-
-    Object.keys(groupedComments).forEach((productId) => {
-      localStorage.setItem(
-        `comments_${productId}`,
-        JSON.stringify(groupedComments[productId])
-      );
-    });
-  };
-
   const filteredComments = comments.filter((comment) =>
     comment.text.toLowerCase().includes(searchTerm.toLowerCase())
   );
