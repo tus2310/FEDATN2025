@@ -27,26 +27,3 @@ export const addCategory = async (category: IcategoryLite) => {
     console.log(error);
   }
 };
-
-export const updateCategory = async (id?: string, category?: IcategoryLite) => {
-  try {
-    const { data } = await axiosservice.put(`/updatecategory/${id}`, category);
-    return data;
-  } catch (error: any) {
-    console.log(
-      "Error updating category:",
-      error.response?.data || error.message
-    );
-    throw error;
-  }
-};
-
-export const deactivateCategory = async (id: string) => {
-  const { data } = await axiosservice.put(`/category/deactivate/${id}`);
-  return data;
-};
-
-export const activateCategory = async (id: string) => {
-  const { data } = await axiosservice.put(`/category/activate/${id}`);
-  return data;
-};

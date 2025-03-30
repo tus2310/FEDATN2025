@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import {
-  deactivateCategory,
-  activateCategory,
-  getAllCategories,
-} from "../../service/category";
+// import {
+//   deactivateCategory,
+//   activateCategory,
+//   getAllCategories,
+// } from "../../service/category";
 import { Icategory } from "../../interface/category";
 import { Popconfirm, Pagination } from "antd";
 import LoadingComponent from "../Loading";
