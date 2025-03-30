@@ -5,7 +5,6 @@ import { Icategory } from "../../../interface/category";
 import { getAllCategories } from "../../../service/category";
 import { upload } from "../../../service/upload";
 import LoadingComponent from "../../Loading";
-import { getAllMaterials } from "../../../service/material";
 import { Iproduct, IVariant } from "../../../interface/products";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -77,91 +76,6 @@ const ProductUpdate = () => {
     fetchProduct();
   }, [id]);
 
-  const activeCategories = category.filter((cat) => cat.status === "active");
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const newFiles = Array.from(e.target.files);
-    setFiles((prev) => [...prev, ...newFiles]);
-  };
-
-  const handleRemoveImage = (url: string) => {
-    setExistingImages((prev) => prev.filter((img) => img !== url));
-  };
-
-  const uploadImages = async (files: File[]): Promise<string[]> => {
-    const urls: string[] = [];
-    for (const file of files) {
-      const formData = new FormData();
-      formData.append("images", file);
-
-      try {
-        const response = await upload(formData);
-        const imageUrl = response.payload[0].url;
-        urls.push(imageUrl);
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        showNotification(
-          "error",
-          "Lỗi tải ảnh",
-          "Không thể tải ảnh lên, vui lòng thử lại!"
-        );
-      }
-    }
-    return urls;
-  };
-
-  const addVariant = () => {
-    setVariants((prev) => [...prev, { size: "",color: "", quantity: 0, basePrice: 0 }]);
-  };
-
-  const removeVariant = (index: number) => {
-    setVariants((prev) => prev.filter((_, i) => i !== index));
-  };
-  const calculateTotalPrice = () => {
-    const total = variants.reduce((acc, variant) => {
-      const discountAmount = variant.discount || 0;
-      const effectivePrice = variant.basePrice - discountAmount;
-      return acc + (effectivePrice > 0 ? effectivePrice : 0) * variant.quantity;
-    }, 0);
-    setTotalPrice(total);
-  };
-
-  const handleVariantChange = (
-    index: number,
-    key: keyof IVariant,
-    value: string | number | undefined // Chấp nhận các loại có thể
-  ) => {
-    const newVariants: IVariant[] = [...variants];
-
-    // Cập nhật biến thể
-    if (key === "size" && typeof value === "string") {
-      newVariants[index][key] = value as IVariant["size"];
-
-      // Kiểm tra kích thước trùng lặp
-      const sizes = newVariants.map((variant) => variant.size);
-      if (sizes.filter((size) => size === value).length > 1) {
-        showNotification(
-          "error",
-          "Lỗi",
-          "Kích thước này đã tồn tại trong các biến thể khác!"
-        );
-        return; //Thoát nếu trùng lặp
-      }
-    } else if (key === "quantity" && typeof value === "number") {
-      newVariants[index][key] = value as IVariant["quantity"];
-    } else if (key === "basePrice" && typeof value === "number") {
-      newVariants[index][key] = value as IVariant["basePrice"];
-    } else if (
-      key === "discount" &&
-      (typeof value === "number" || value === undefined)
-    ) {
-      newVariants[index][key] = value as IVariant["discount"];
-    }
-
-    setVariants(newVariants);
-    calculateTotalPrice(); // Tính tổng bất cứ khi nào một biến thể thay đổi
-  };
 
   const onFinish = async (values: any) => {
     setLoading(true);
