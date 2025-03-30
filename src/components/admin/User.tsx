@@ -56,6 +56,19 @@ const Users = (props: Props) => {
     }
   };
 
+  const activateUserById = async (_id: string) => {
+    try {
+      await activateUser(_id);
+      message.success(`Người dùng với ID ${_id} đã được kích hoạt lại.`);
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => (user._id === _id ? { ...user, active: true } : user))
+      );
+    } catch (error) {
+      console.error("Error activating user:", error);
+      message.error("Có lỗi xảy ra khi kích hoạt lại người dùng.");
+    }
+  };
+
   const filteredUsers = users.filter((user) =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
