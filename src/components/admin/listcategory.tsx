@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import {
-  deactivateCategory,
-  activateCategory,
-  getAllCategories,
-} from "../../service/category";
+// import {
+//   deactivateCategory,
+//   activateCategory,
+//   getAllCategories,
+// } from "../../service/category";
 import { Icategory } from "../../interface/category";
 import { Popconfirm, Pagination } from "antd";
 import LoadingComponent from "../Loading";
@@ -50,29 +50,11 @@ const Listcategory = (props: Props) => {
     }
   };
 
-  const handleActivateCategory = async (id: string) => {
-    try {
-      await activateCategory(id);
-      const updatedCategories = categories.map((category) =>
-        category._id === id
-          ? { ...category, status: "active" as "active" }
-          : category
-      );
-      setCategory(updatedCategories);
-    } catch (error) {
-      console.error("Error activating category:", error);
-    }
-  };
-
-  const updateCategory = (id: string) => {
-    navigate(`updatecategory/${id}`);
-  };
-
   const filteredCategories = Array.isArray(categories)
     ? categories.filter((category) =>
         category.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
-    : [];     
+    : [];
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedCategories = filteredCategories.slice(

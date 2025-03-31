@@ -1,6 +1,5 @@
-export interface Icategory{
-    _id: string,
-    name: string,
-    status: 'active' | 'deactive'; 
+export interface Icategory {
+  _id: string;
+  name: string;
 }
-export type IcategoryLite = Pick<Icategory, 'name' >
+export type IcategoryLite = Pick<Icategory, "name">;
