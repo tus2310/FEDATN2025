@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Popconfirm, message, Pagination, Input, Modal, Select, Table, Button } from "antd";
-import { getAllusersAccount, activateUser, deactivateUser } from "../../service/user";
+import { getAllusersAccount, activateUser, deactivateUser, getDeactivationHistory } from "../../service/user";
 import { IUser } from "../../interface/user";
 import LoadingComponent from "../Loading";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +15,7 @@ const Users = (props: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
+  const [deactivationHistory, setDeactivationHistory] = useState<any[]>([]);
   const [reason, setReason] = useState<string>("");
   const [showHistory, setShowHistory] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -55,6 +56,19 @@ const Users = (props: Props) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchDeactivationHistory = async () => {
+      try {
+        const data = await getDeactivationHistory();
+        setDeactivationHistory(data);
+      } catch (error) {
+        console.error("Error fetching deactivation history:", error);
+      }
+    };
+    fetchUsers();
+    fetchDeactivationHistory();
+  }, []);
 
   const deactivateUserById = async (id: string) => {
     let selectedReasonLocal = "";
@@ -293,6 +307,23 @@ const Users = (props: Props) => {
               }}
             />
           )}
+        </Modal>
+
+        {/* Deactivation History Modal */}
+        <Modal
+          title="Lịch Sử Vô Hiệu Hóa"
+          visible={showHistory}
+          onCancel={() => setShowHistory(false)}
+          footer={null}
+          width={800}
+          className="rounded-lg"
+        >
+          <Table
+            columns={historyColumns}
+            dataSource={deactivationHistory}
+            rowKey="userId"
+            className="rounded-lg"
+          />
         </Modal>
       </div>
     </div>
