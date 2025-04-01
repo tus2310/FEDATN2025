@@ -1,137 +1,91 @@
-import React, { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { Popconfirm, message } from "antd";
-import LoadingComponent from "../Loading";
-import { InewsLite } from "../../interface/news";
-import { deletePost, getAllPosts } from "../../service/new";
+import { useEffect, useState } from "react";
+import { getAllPosts } from "../service/new"; // Adjust the path based on your file structure
+import { InewsLite } from "../interface/news";
+import { Link, useNavigate } from "react-router-dom";
+import Header from "./Header";
+import Footer from "./Footer";
 
-type Props = {};
-
-const DashboardNews = (props: Props) => {
-  const [news, setNews] = useState<InewsLite[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const navigate = useNavigate();
-  const [messageApi, contextHolder] = message.useMessage();
-
-  const fetchNews = async () => {
-    try {
-      setLoading(true);
-      const data = await getAllPosts();
-      setNews((data || []).reverse());
-    } catch (error) {
-      console.error("Error fetching news:", error);
-      message.error("Lỗi khi tải danh sách tin tức.");
-    } finally {
-      setLoading(false);
-    }
-  };
+const Tintuc = () => {
+  const [user, setUser] = useState<{
+    info: { role: string; email: string; id: string };
+    id: string;
+  } | null>(null);
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
+  const [articles, setArticles] = useState<InewsLite[]>([]); // State to store fetched articles
+  const Navigate = useNavigate();
 
   useEffect(() => {
-    fetchNews();
+    const userData = sessionStorage.getItem("user");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
   }, []);
 
-  const deleteSelectedNews = async (id: string) => {
-    try {
-      const responseMessage = await deletePost(id);
-      if (responseMessage) {
-        setNews((prev) => prev.filter((item) => item._id !== id));
-        message.success("Xóa bài viết thành công!");
+  // Fetch posts when component mounts
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const posts = await getAllPosts();
+      if (posts) {
+        setArticles(posts); // Set the articles if fetched successfully
       }
-    } catch (error) {
-      console.error("Error deleting news:", error);
-      message.error("Lỗi khi xóa bài viết.");
-    }
+    };
+
+    fetchPosts(); // Call the function to fetch posts
+  }, []); // Empty dependency array to run only once when the component mounts
+
+  const toggleSubMenu = () => {
+    setIsSubMenuOpen(!isSubMenuOpen);
   };
 
-  const updateNews = (id: string) => {
-    navigate(`/admin/News/updatenews/${id}`);
+  const handleLogout = () => {
+    sessionStorage.removeItem("user");
+    setUser(null);
+    Navigate("/");
   };
 
   return (
     <>
-      {loading && <LoadingComponent />}
-      {contextHolder}
-      <div className="flex items-center justify-between px-6 h-[96px] bg-white-600 text-white"></div>
-
-      <NavLink to={"/admin/addNews"}>
-        <button className="focus:outline-none text-white bg-indigo-600 hover:bg-indigo-700 transition duration-300 ease-in-out font-medium rounded-lg text-sm px-5 py-2.5 mb-6 shadow-md transform hover:scale-105">
-          Thêm tin tức mới
-        </button>
-      </NavLink>
-
-      <div className="mb-6 flex flex-col w-full">
-        <div className="overflow-x-auto">
-          <div className="py-2 inline-block w-full">
-            <div className="overflow-hidden bg-white rounded-lg shadow-lg">
-              <table className="min-w-full table-auto border-separate border-spacing-0">
-                <thead className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
-                  <tr>
-                    <th className="text-sm font-medium text-left px-6 py-4">
-                      STT
-                    </th>
-                    <th className="text-sm font-medium text-left px-6 py-4">
-                      Tiêu đề
-                    </th>
-                    <th className="text-sm font-medium text-left px-6 py-4">
-                      Hình ảnh
-                    </th>
-                    <th className="text-sm font-medium text-left px-6 py-4">
-                      Mô tả
-                    </th>
-                    <th className="text-sm font-medium text-left px-6 py-4">
-                      Hành động
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm">
-                  {news.map((item, index) => (
-                    <tr
-                      className="hover:bg-gray-100 border-b transition duration-300 ease-in-out"
-                      key={item._id}
-                    >
-                      <td className="px-6 py-4">{index + 1}</td>
-                      <td className="px-6 py-4">{item.title}</td>
-                      <td className="px-6 py-4">
-                        <img
-                          src={item.img[0]}
-                          alt="news"
-                          className="w-24 h-16 object-cover rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-                        />
-                      </td>
-                      <td className="px-6 py-4">
-                        {item.descriptions.length > 50
-                          ? `${item.descriptions.substring(0, 50)}...`
-                          : item.descriptions}
-                      </td>
-                      <td className="px-6 py-4">
-                        <button
-                          onClick={() => updateNews(item._id)}
-                          className="text-white bg-indigo-600 hover:bg-indigo-700 transition duration-300 ease-in-out rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
-                        >
-                          Edit
-                        </button>
-                        <Popconfirm
-                          title="Bạn có chắc muốn xóa?"
-                          onConfirm={() => deleteSelectedNews(item._id)}
-                          okText="Yes"
-                          cancelText="No"
-                        >
-                          <button className="ml-2 text-white bg-red-600 hover:bg-red-700 transition duration-300 ease-in-out rounded-lg text-sm px-5 py-2.5">
-                            Xóa
-                          </button>
-                        </Popconfirm>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+      <Header />
+      <div className="container mx-auto w-full">
+        <main className="my-5">
+          <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">
+            Tin Tức
+          </h1>
+          {/* Articles Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {articles.length === 0 ? (
+              <p className="text-center text-lg text-gray-500">
+                Không có bài viết nào.
+              </p>
+            ) : (
+              articles.map((article) => (
+                <Link
+                  key={article._id}
+                  to={`/tintuc/${article._id}`}
+                  className="block bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                >
+                  <img
+                    src={article.img[0]} // Default to canho if no image
+                    alt={article.title}
+                    className="w-full h-48 object-cover transition-all duration-300 transform hover:scale-110"
+                  />
+                  <div className="p-6">
+                    <h2 className="text-2xl font-semibold text-gray-900">
+                      {article.title}
+                    </h2>
+                    <p className="mt-3 text-gray-600">
+                      {article.content.slice(0, 100)}...
+                    </p>
+                  </div>
+                </Link>
+              ))
+            )}
           </div>
-        </div>
+        </main>
       </div>
+      <Footer />
     </>
   );
 };
 
-export default DashboardNews;
+export default Tintuc;
