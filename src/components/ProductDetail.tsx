@@ -119,39 +119,6 @@ const ProductDetail = () => {
     }
   };
 
-  const handleSubVariantChange = (index: number) => {
-    setSelectedSubVariant(index);
-  };
-
-  const handleColorChange = (color: string) => {
-    setSelectedColor(color);
-    if (!product || !product.variants) return;
-    const variantIndex = product.variants.findIndex((v) => v.color === color);
-    if (variantIndex !== -1) {
-      setSelectedVariant(variantIndex);
-      setSelectedSubVariant(0); // Reset sub-variant selection
-      setSelectedImage(product.img?.[variantIndex] || null);
-    }
-  };
-
-  const calculateTotalQuantity = (variants: IVariant[] = [], variantIndex: number | null, subVariantIndex: number | null): number => {
-    if (!variants || variantIndex === null || subVariantIndex === null) return 0;
-    const selectedVariant = variants[variantIndex];
-    const selectedSubVariant = selectedVariant.subVariants[subVariantIndex];
-    return selectedSubVariant ? selectedSubVariant.quantity : 0;
-  };
-
-  const calculateTotalPrice = (variant: IVariant, subVariantIndex: number | null): number => {
-    if (subVariantIndex === null) return 0;
-    const subVariant = variant.subVariants[subVariantIndex];
-    const totalPrice = variant.basePrice + (subVariant.additionalPrice || 0);
-    const discount = variant.discount || 0;
-    return totalPrice - discount;
-  };
-
-  const truncateText = (text: string, maxLength: number): string => {
-    return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
-  };
 
   return (
     <>
