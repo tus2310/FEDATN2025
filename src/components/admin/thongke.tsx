@@ -30,17 +30,6 @@ const Thongke = () => {
     fetchStats();
   }, []);
 
-  if (loading) {
-    return (
-      <div style={{ textAlign: "center", padding: "50px" }}>
-        <Spin size="large" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return <div style={{ color: "red", textAlign: "center" }}>{error}</div>;
-  }
 
   // Order Statistics Bar Chart Data
   const orderChartData = {
@@ -68,20 +57,6 @@ const Thongke = () => {
     ],
   };
 
-
-  const revenueChartOptions = {
-    responsive: true,
-    plugins: {
-      legend: { position: "top" as const },
-      title: { display: true, text: "Thống kê doanh thu" },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: { display: true, text: "Số tiền (VND)" },
-      },
-    },
-  };
 
   return (
     <div style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
