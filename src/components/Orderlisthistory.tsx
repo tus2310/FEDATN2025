@@ -342,32 +342,7 @@ const Orderlisthistory = () => {
         </div>
       </div>
       {showModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-            <h3 className="text-xl font-semibold mb-4">Lý do hủy đơn hàng</h3>
-            <textarea
-              className="w-full p-2 border border-gray-300 rounded-lg mb-4"
-              rows={4}
-              value={cancelReason}
-              onChange={(e) => setCancelReason(e.target.value)}
-              placeholder="Nhập lý do hủy đơn hàng"
-            />
-            <div className="flex justify-end">
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2"
-                onClick={handleCancelOrder}
-              >
-                Xác nhận hủy
-              </button>
-              <button
-                className="bg-gray-300 text-black px-4 py-2 rounded-lg"
-                onClick={() => setShowModal(false)}
-              >
-                Đóng
-              </button>
-            </div>
-          </div>
-        </div>
+
       )}
       <Footer />
     </>
