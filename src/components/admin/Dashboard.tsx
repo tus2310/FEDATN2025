@@ -157,23 +157,6 @@ const Dashboard = (props: Props) => {
       )
     : [];
 
-  const uniqueCategories = Array.from(
-    new Set(products.map((product) => product.category.name))
-  );
-  const csvData = filteredProducts.map((products) => ({
-    ID: products._id,
-    "Mã sản phẩm": products.masp,
-    "Tên sản phẩm": products.name,
-    "Gía sản phẩm":
-      products.variants && products.variants.length > 0
-        ? products.variants[0].basePrice
-        : 0, // Truy cập giá từ biến thể đầu tiên
-    "Tên danh mục": products.category.name,
-    "Số lượng sản phẩm": calculateTotalQuantity(products.variants),
-    "Mô tả sản phẩm": products.moTa,
-    "Anh sản phẩm": products.img,
-    "Trạng thái": products.status ? "Hoạt động" : "Vô hiệu hóa",
-  }));
 
   return (
     <>
