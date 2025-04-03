@@ -133,12 +133,6 @@ function OrderPayment() {
     }
   };
 
-  const total = cartItems.reduce((total, item) => {
-    const quantity = item.quantity ?? 0;
-    const price = item.price ?? 0;
-    return total + price * quantity;
-  }, 0);
-
   const discountedTotal = Math.max(0, total - discount);
 
   const handleOrderSubmit = async () => {
@@ -158,33 +152,32 @@ function OrderPayment() {
     const updateProductQuantities = async (items: ICartItem[]) => {
       try {
         for (const item of items) {
-          console.log(`Fetching product data for: ${item.productId}`);
-
-          // Fetch product data
-          const response = await fetch(
-            `http://localhost:28017/api/products-pay/${item.productId}`,
-            {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }
+          console.log(
+            `Processing item: ${item.productId}, Quantity to order: ${item.quantity}`
           );
 
+          const response = await fetch(
+            `http://localhost:28017/api/products-pay/${item.productId}`,
+            { method: "GET", headers: { "Content-Type": "application/json" } }
+          );
           if (!response.ok) {
             const error = await response.json();
+            console.error(`GET failed for ${item.productId}:`, error);
             toast.error(error.message || "Không thể lấy thông tin sản phẩm.");
-            return;
+            return false;
           }
-
           const product = await response.json();
-          console.log("Product data received:", product);
+          console.log("Product data:", product);
 
-          // Find the variant and subVariant
           const variant = product.variants.find(
             (v: any) => v.color === item.color
           );
           if (!variant) {
+            console.error(
+              `Variant not found for ${item.productId}, color: ${item.color}`
+            );
             toast.error(`Không tìm thấy biến thể cho sản phẩm ${item.name}.`);
-            return;
+            return false;
           }
 
           let subVariant;
@@ -195,20 +188,83 @@ function OrderPayment() {
                 sv.value === item.subVariant?.value
             );
             if (!subVariant) {
+              console.error(`SubVariant not found for ${item.productId}`);
               toast.error(`Không tìm thấy tùy chọn cho sản phẩm ${item.name}.`);
-              return;
+              return false;
             }
           }
+          const updatedQuantity = availableQuantity - item.quantity;
+          console.log(`New quantity: ${updatedQuantity}`);
 
-          // Check stock availability
-          const availableQuantity = subVariant
-            ? subVariant.quantity
-            : variant.quantity || 0;
-          if (availableQuantity < item.quantity) {
-            toast.error(`Sản phẩm ${item.name} không đủ số lượng trong kho.`);
-            return;
+          const updatePayload = {
+            quantity: updatedQuantity,
+            color: item.color,
+            subVariant: item.subVariant
+              ? {
+                  specification: item.subVariant.specification,
+                  value: item.subVariant.value,
+                }
+              : undefined,
+          };
+          console.log("Update payload:", updatePayload);
+
+          const updateResponse = await fetch(
+            `http://localhost:28017/api/products/${item.productId}`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(updatePayload),
+            }
+          );
+
+          if (!updateResponse.ok) {
+            const error = await updateResponse.json();
+            console.error(`PUT failed for ${item.productId}:`, error);
+            toast.error(
+              error.message ||
+                `Không thể cập nhật số lượng cho sản phẩm ${item.name}.`
+            );
+            return false;
           }
-         
+
+          const updatedProduct = await updateResponse.json();
+          console.log(`Updated product response:`, updatedProduct);
+        }
+        return true;
+      } catch (error) {
+        console.error("Unexpected error updating quantities:", error);
+        toast.error("Không thể cập nhật số lượng sản phẩm trong kho.");
+        return false;
+      }
+    };
+
+    try {
+      await updateProductQuantities(cartItems);
+      if (selectedPaymentMethod === "cash_on_delivery") {
+        await placeOrder(orderData);
+        toast.success(
+          "Cảm ơn bạn! Đơn hàng của bạn đã được xác nhận thành công.",
+          { position: "top-right" }
+        );
+        setCartItems([]);
+        navigate("/success", { state: { orderData } });
+      } else if (selectedPaymentMethod === "vnpay") {
+        await placeOrder(orderData);
+        const paymentUrl = await createVNPayPayment({
+          userId: user,
+          paymentMethod: selectedPaymentMethod,
+          amount: discountedTotal,
+        });
+        setCartItems([]);
+        window.location.href = paymentUrl; // Redirect to VNPay
+      }
+    } catch (error) {
+      toast.error(
+        "Rất tiếc! Đã có lỗi xảy ra khi xác nhận đơn hàng. Vui lòng thử lại.",
+        { position: "top-right" }
+      );
+    }
+  };
 
   return (
     <>
