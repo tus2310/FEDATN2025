@@ -41,20 +41,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Group Websites */}
-          <div>
-            <h3 className="font-bold">Website cùng tập đoàn</h3>
-            <div className="flex flex-wrap gap-2">
-              <img src="/topzone.png" alt="TopZone" className="h-6" />
-              <img src="/dienmayxanh.png" alt="Điện Máy Xanh" className="h-6" />
-              <img src="/bachhoaxanh.png" alt="Bách Hóa Xanh" className="h-6" />
-              <img src="/ankhang.png" alt="An Khang" className="h-6" />
-              <img src="/weclam.png" alt="Việc Làm" className="h-6" />
-              <img src="/erablue.png" alt="EraBlue" className="h-6" />
-            </div>
-          </div>
-        </div>
-
+         
         {/* Bottom Section */}
         <div className="mt-6 text-center text-gray-600">
           <p>© 2025 Công ty Cổ phần Thế Giới Di Động. GPKD: 0303217354 do Sở KH & ĐT TP.HCM cấp ngày 02/01/2007.</p>
