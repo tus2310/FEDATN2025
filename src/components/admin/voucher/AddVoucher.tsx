@@ -25,6 +25,19 @@ const AddVoucher = (props: Props) => {
     fetchData();
   }, []);
 
+  // Handle form submission
+  const onFinish = async (values: any) => {
+    try {
+      const payload = {
+        ...values,
+        expirationDate: values.expirationDate.toISOString(), // Format date for API
+      };
+    } catch (error) {
+      console.error("Error adding voucher:", error);
+      message.error("Server error: Unable to add voucher.");
+    }
+  };
+
   return (
     <>
       <div className="max-w-6xl mx-auto p-8 bg-white shadow-xl rounded-xl">
