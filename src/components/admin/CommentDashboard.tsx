@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Popconfirm, Button, Input, Table } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
+// import dayjs from "dayjs";
 
 interface Comment {
   id: number;
@@ -61,9 +61,9 @@ const CommentDashboard = () => {
     });
   };
 
-  const filteredComments = comments.filter((comment) =>
-    comment.text.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredComments = comments.filter((comment) =>
+  //   comment.text.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   const columns = [
     {
