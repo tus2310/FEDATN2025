@@ -25,7 +25,6 @@ const ListVouchers = () => {
       setLoading(false);
     }
   };
-
   const columns = [
     {
       title: "Mã",
