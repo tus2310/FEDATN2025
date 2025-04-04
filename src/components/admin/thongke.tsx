@@ -36,7 +36,10 @@ const Thongke = () => {
         <Spin size="large" />
       </div>
     );
-  }   
+  } 
+  if (error) {
+    return <div style={{ color: "red", textAlign: "center" }}>{error}</div>;
+  }  
 
 
   // Order Statistics Bar Chart Data
