@@ -46,6 +46,6 @@ export interface Order {
     canceledAt: string;
     canceledBy?: string;
   };
-  //   confirmedAt?: string;
-  //   confirmedBy?: string;
+  confirmedAt?: string;
+  confirmedBy?: string;
 }
