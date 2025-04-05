@@ -67,7 +67,24 @@ export const DeleteProduct = async (pid: string) => {
 };
 
 // Hàm kích hoạt sản phẩm
+export const ActivateProduct = async (pid: string) => {
+  try {
+    const { data } = await axiosservice.put(`/product/activate/${pid}`);
+    return data;
+  } catch (error) {
+    console.log("Error activating product:", error);
+  }
+};
 
+// Hàm vô hiệu hóa sản phẩm
+export const DeactivateProduct = async (pid: string) => {
+  try {
+    const { data } = await axiosservice.put(`/product/deactivate/${pid}`);
+    return data;
+  } catch (error) {
+    console.log("Error deactivating product:", error);
+  }
+};
 
 // hàm lọc sản phẩm theo danh mục
 export const getProductsByCategory = async (categoryId: string) => {
@@ -79,8 +96,14 @@ export const getProductsByCategory = async (categoryId: string) => {
   }
 };
 export const calculateTotalQuantity = (variants?: IVariant[]): number => {
-  if (!variants) return 0;
-  return variants.reduce((total, variant) => total + variant.quantity, 0);
+  if (!variants || variants.length === 0) return 0;
+  return variants.reduce((total, variant) => {
+    const subVariantTotal = variant.subVariants.reduce(
+      (subTotal, subVariant) => subTotal + subVariant.quantity,
+      0
+    );
+    return total + subVariantTotal;
+  }, 0);
 };
 // service/products.ts
 export const checkProductExistence = async (masp: string, name: string) => {
