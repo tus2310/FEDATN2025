@@ -12,7 +12,7 @@ const Profileinfo = (props: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   
   const [profileData, setProfileData] = useState({
-    img: "",
+    // img: "",
     name: "",
     dob: "",
     gender: "",
@@ -118,7 +118,6 @@ const Profileinfo = (props: Props) => {
       }
   
       // Update the profileData with the new image URL
-      const updatedProfileData = { ...profileData, img: uploadedImageUrl };
   
       // Send the updated profile data to the server
       const response = await axios.put(`http://localhost:28017/updateProfile/${userId}`, updatedProfileData);
@@ -185,15 +184,6 @@ const Profileinfo = (props: Props) => {
             <h1 className="text-xl font-bold text-gray-800">{profileData.name}</h1>
             <p className="text-sm text-gray-600">{profileData.role}</p>
           </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Ảnh đại diện</label>
-          <input
-            type="file"
-            onChange={handleFileChange}
-            className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer focus:outline-none"
-          />
         </div>
 
         <div className="grid grid-cols-2 gap-6 mt-8">
