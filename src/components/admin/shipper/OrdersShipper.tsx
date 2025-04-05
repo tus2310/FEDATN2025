@@ -40,7 +40,95 @@ const OrdersShipper = (props: Props) => {
     return () => clearInterval(interval);
   }, []);
 
+  const handleInProgressOrder = async (orderId: string) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.put(
+        `http://localhost:28017/orders-list/${orderId}`,
+        {
+          status: "in_progress",
+        }
+      );
+
+      if (response.status === 200 && response.data) {
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === orderId
+              ? {
+                  ...order,
+                  status: "in_progress",
+                }
+              : order
+          )
+        );
+      } else {
+        setError("Không thể cập nhật trạng thái đơn hàng");
+      }
+    } catch (err) {
+      setError("Không thể cập nhật trạng thái đơn hàng");
+      console.error("Error updating order status:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFailedDelivery = async (orderId: string) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const orderToUpdate = orders.find((order) => order._id === orderId);
+
+      if (!orderToUpdate) {
+        setError("Order not found");
+        return;
+      }
+
+      const returnedItems = orderToUpdate.items.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+      }));
+
+      const response = await axios.put(
+        `http://localhost:28017/orders-list/${orderId}`,
+        {
+          status: "failed",
+          paymentstatus: "chưa thanh toán",
+          returnedItems,
+        }
+      );
+
+      if (response.status === 200 && response.data) {
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === orderId
+              ? {
+                  ...order,
+                  status: "failed",
+                  paymentStatus: "chưa thanh toán",
+                }
+              : order
+          )
+        );
+
+        console.log("Order marked as failed and inventory updated.");
+      } else {
+        setError("Failed to update order status.");
+      }
+    } catch (err) {
+      setError("An error occurred while updating order status.");
+      console.error("Error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const indexOfLastOrder = currentPage * itemsPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - itemsPerPage;
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
@@ -144,8 +232,8 @@ const OrdersShipper = (props: Props) => {
                           ? "Đóng gói"
                           : order.status === "in_progress"
                           ? "Đang giao"
-                           : order.status === "confirm-receive"
-                           ?"Thành công"
+                          : order.status === "confirm-receive"
+                          ? "Thành công"
                           : order.status === "delivered"
                           ? "Đã giao"
                           : order.status === "cancelledOrder"
@@ -171,7 +259,7 @@ const OrdersShipper = (props: Props) => {
                       </button>
                     )}
 
-                    {order.status === "in_progress" && (
+                    {/* {order.status === "in_progress" && (
                       <div className="flex space-x-2">
                         <button
                           onClick={() => handleConfirmDelivery(order._id)}
@@ -189,7 +277,7 @@ const OrdersShipper = (props: Props) => {
                           </button>
                         )}
                       </div>
-                    )}
+                    )} */}
                   </td>
                 </tr>
               ))}
