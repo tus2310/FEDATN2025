@@ -31,9 +31,6 @@ const ShipperDashboard = (props: Props) => {
     fetchOrders();
   }, [filter]);
 
-  const pendingOrders = orders.filter(
-    (order) => order.status === "pending"
-  ).length;
   return (
     <div
       className="container mx-auto p-6 relative"
