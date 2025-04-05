@@ -25,6 +25,22 @@ const ListVouchers = () => {
       setLoading(false);
     }
   };
+
+  const handleToggleActive = async (id: string, isActive: boolean) => {
+    if (!id) {
+      message.error("Voucher ID is required.");
+      return;
+    }
+    try {
+      await toggleVoucherStatus(id);
+      message.success(
+        `Voucher ${isActive ? "deactivated" : "activated"} successfully!`
+      );
+    } catch (error) {
+      console.error("Failed to update voucher status:", error);
+      message.error("Failed to update voucher status.");
+    }
+  };
   const columns = [
     {
       title: "Mã",
@@ -47,6 +63,23 @@ const ListVouchers = () => {
       dataIndex: "expirationDate",
       key: "expirationDate",
       render: (date: string) => new Date(date).toLocaleDateString(),
+    },
+    {
+      title: "Hiệu lực",
+      dataIndex: "isActive",
+      key: "isActive",
+      render: (isActive: boolean, record: IVoucher) => (
+        <Switch
+          checked={isActive}
+          onChange={() => {
+            if (record._id) {
+              handleToggleActive(record._id, isActive);
+            } else {
+              message.error("Voucher ID is missing.");
+            }
+          }}
+        />
+      ),
     },
     {
       title: "Actions",
