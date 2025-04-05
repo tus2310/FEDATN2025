@@ -32,6 +32,17 @@ const AddVoucher = (props: Props) => {
         ...values,
         expirationDate: values.expirationDate.toISOString(), // Format date for API
       };
+
+      const voucher = await addVoucher(payload);
+
+      if (voucher) {
+        successMessage();
+        message.success("Voucher added successfully!");
+        form.resetFields();
+        navigate("/admin/Vouchers"); // Navigate to voucher list
+      } else {
+        message.error("Unable to add voucher");
+      }
     } catch (error) {
       console.error("Error adding voucher:", error);
       message.error("Server error: Unable to add voucher.");
