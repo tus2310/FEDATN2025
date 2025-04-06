@@ -77,26 +77,7 @@ const Users = (props: Props) => {
     Modal.confirm({
       title: "Vô hiệu hóa người dùng",
       content: (
-        <div className="space-y-4">
-          <p className="text-gray-700">Vui lòng chọn lý do hoặc nhập lý do mới:</p>
-          <Select
-            className="w-full"
-            placeholder="Chọn lý do"
-            onChange={(value: string) => (selectedReasonLocal = value)}
-            allowClear
-          >
-            <Option value="Vi phạm chính sách">Vi phạm chính sách</Option>
-            <Option value="Yêu cầu từ người dùng">Yêu cầu từ người dùng</Option>
-            <Option value="Hoạt động bất thường">Hoạt động bất thường</Option>
-          </Select>
-          <TextArea
-            rows={4}
-            placeholder="Hoặc nhập lý do tùy chỉnh"
-            onChange={(e) => (tempReason = e.target.value)}
-            className="border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-      ),
+        
       onOk: async () => {
         const finalReason = selectedReasonLocal || tempReason.trim();
         if (!finalReason) {
