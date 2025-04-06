@@ -68,6 +68,19 @@ const Thongke = () => {
     ],
   };
 
+  const orderChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: "top" as const },
+      title: { display: true, text: "Thống kê đơn hàng" },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: "Số lượng" },
+      },
+    },
+  };
 
   return (
     <div style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
