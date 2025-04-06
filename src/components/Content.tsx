@@ -91,6 +91,13 @@ const Content = (props: Props) => {
     <img src={banner2} alt="" className="w-full h-full object-cover" />
   </div>
 </div>
+ <div className="banner2 flex-1">
+ <img src={banner2} alt="" className="w-full h-full object-cover" />
+</div>
+</div> <div className="banner2 flex-1">
+<img src={banner2} alt="" className="w-full h-full object-cover" />
+</div>
+</div>
 
 <div className="bannerbot pt-[20px]">
 <div className="banner1 flex-1">
