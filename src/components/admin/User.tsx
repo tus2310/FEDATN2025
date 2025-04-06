@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Popconfirm, message, Pagination, Input, Modal, Select, Table, Button } from "antd";
-import { getAllusersAccount, activateUser, deactivateUser, getDeactivationHistory } from "../../service/user";
+import { getAllusersAccount, } from "../../service/user";
 import { IUser } from "../../interface/user";
 import LoadingComponent from "../Loading";
 import { useNavigate } from "react-router-dom";
@@ -75,37 +75,6 @@ const Users = (props: Props) => {
     let tempReason = "";
 
     Modal.confirm({
-      title: "Vô hiệu hóa người dùng",
-      content: (
-        
-      onOk: async () => {
-        const finalReason = selectedReasonLocal || tempReason.trim();
-        if (!finalReason) {
-          message.error("Vui lòng chọn hoặc nhập lý do.");
-          return Promise.reject();
-        }
-        try {
-          const _id = "admin"; // Assuming admin ID
-          await deactivateUser(id, finalReason);
-          message.success(`Người dùng với ID ${id} đã được vô hiệu hóa.`);
-
-          setUsers((prevUsers) =>
-            prevUsers.map((user) =>
-              user._id === id ? { ...user, active: false, reason: finalReason } : user
-            )
-          );
-          setDeactivationHistory((prevHistory) => [
-            ...prevHistory,
-            { userId: id, reason: finalReason, date: new Date().toLocaleString(), adminId: _id },
-          ]);
-
-          sessionStorage.removeItem("userToken");
-          sessionStorage.removeItem("userData");
-        } catch (error) {
-          console.error("Error deactivating user:", error);
-          message.error("Có lỗi xảy ra khi vô hiệu hóa người dùng.");
-        }
-      },
       okText: "Xác nhận",
       cancelText: "Hủy",
       className: "rounded-lg",
