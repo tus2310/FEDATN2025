@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Popconfirm, message, Pagination, Input, Modal, Select, Table, Button } from "antd";
-import { getAllusersAccount, } from "../../service/user";
+import { getAllusersAccount, activateUser, deactivateUser, getDeactivationHistory } from "../../service/user";
 import { IUser } from "../../interface/user";
 import LoadingComponent from "../Loading";
 import { useNavigate } from "react-router-dom";
@@ -75,6 +75,56 @@ const Users = (props: Props) => {
     let tempReason = "";
 
     Modal.confirm({
+      title: "Vô hiệu hóa người dùng",
+      content: (
+        <div className="space-y-4">
+          <p className="text-gray-700">Vui lòng chọn lý do hoặc nhập lý do mới:</p>
+          <Select
+            className="w-full"
+            placeholder="Chọn lý do"
+            onChange={(value: string) => (selectedReasonLocal = value)}
+            allowClear
+          >
+            <Option value="Vi phạm chính sách">Vi phạm chính sách</Option>
+            <Option value="Yêu cầu từ người dùng">Yêu cầu từ người dùng</Option>
+            <Option value="Hoạt động bất thường">Hoạt động bất thường</Option>
+          </Select>
+          <TextArea
+            rows={4}
+            placeholder="Hoặc nhập lý do tùy chỉnh"
+            onChange={(e) => (tempReason = e.target.value)}
+            className="border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      ),
+      onOk: async () => {
+        const finalReason = selectedReasonLocal || tempReason.trim();
+        if (!finalReason) {
+          message.error("Vui lòng chọn hoặc nhập lý do.");
+          return Promise.reject();
+        }
+        try {
+          const _id = "admin"; // Assuming admin ID
+          await deactivateUser(id, finalReason);
+          message.success(`Người dùng với ID ${id} đã được vô hiệu hóa.`);
+
+          setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+              user._id === id ? { ...user, active: false, reason: finalReason } : user
+            )
+          );
+          setDeactivationHistory((prevHistory) => [
+            ...prevHistory,
+            { userId: id, reason: finalReason, date: new Date().toLocaleString(), adminId: _id },
+          ]);
+
+          sessionStorage.removeItem("userToken");
+          sessionStorage.removeItem("userData");
+        } catch (error) {
+          console.error("Error deactivating user:", error);
+          message.error("Có lỗi xảy ra khi vô hiệu hóa người dùng.");
+        }
+      },
       okText: "Xác nhận",
       cancelText: "Hủy",
       className: "rounded-lg",
