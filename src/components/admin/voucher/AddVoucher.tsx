@@ -12,7 +12,7 @@ const AddVoucher = (props: Props) => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  // Fetch all vouchers
+  // Lấy tất cả phiếu giảm giá
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -25,7 +25,15 @@ const AddVoucher = (props: Props) => {
     fetchData();
   }, []);
 
-  // Handle form submission
+  // Thông báobáo
+  const successMessage = () => {
+    messageApi.open({
+      type: "success",
+      content: "Đã thêm phiếu giảm giá thành công",
+    });
+  };
+
+  // Handle form bieu mau (submission)
   const onFinish = async (values: any) => {
     try {
       const payload = {
@@ -33,19 +41,28 @@ const AddVoucher = (props: Props) => {
         expirationDate: values.expirationDate.toISOString(), // Format date for API
       };
 
+      // Check ma trung lap
+      const isExist = vouchers.find(
+        (voucher) => voucher.code === payload.code.trim()
+      );
+      if (isExist) {
+        message.error("Mã giảm giá đã tồn tại");
+        return;
+      }
+
       const voucher = await addVoucher(payload);
 
       if (voucher) {
         successMessage();
-        message.success("Voucher added successfully!");
+        message.success("Đã thêm phiếu giảm giá thành công!");
         form.resetFields();
-        navigate("/admin/Vouchers"); // Navigate to voucher list
+        navigate("/admin/Vouchers"); // Navigate phieu giam gia list
       } else {
-        message.error("Unable to add voucher");
+        message.error("Không thể thêm phiếu giảm giá");
       }
     } catch (error) {
-      console.error("Error adding voucher:", error);
-      message.error("Server error: Unable to add voucher.");
+      console.error("Lỗi khi thêm phiếu giảm giá: ", error);
+      message.error("Server error: Không thể thêm phiếu giảm giá.");
     }
   };
 
@@ -78,7 +95,7 @@ const AddVoucher = (props: Props) => {
                 className="text-gray-700 w-full py-3 text-lg px-6 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none"
                 placeholder="Vui lòng nhập giá giảm!"
                 min={0}
-                formatter={(value) => ` ${value}`} // Optional: Format value as currency
+                formatter={(value) => ` ${value}`} // Tùy chọn: Định dạng giá trị thành tiền tệ
               />
             </Form.Item>
           </div>
@@ -94,7 +111,7 @@ const AddVoucher = (props: Props) => {
               <DatePicker
                 className="w-full text-gray-700 p-4 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none"
                 placeholder="Ngày hết hạn!"
-                format="YYYY-MM-DD" // Optional: Specify date format
+                format="YYYY-MM-DD" // Tùy chọn: Chỉ định định dạng ngày
               />
             </Form.Item>
           </div>
