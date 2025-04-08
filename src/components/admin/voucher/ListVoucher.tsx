@@ -36,6 +36,7 @@ const ListVouchers = () => {
       message.success(
         `Voucher ${isActive ? "deactivated" : "activated"} successfully!`
       );
+      fetchVouchers(); // Làm mới danh sách phiếu giảm giá
     } catch (error) {
       console.error("Failed to update voucher status:", error);
       message.error("Failed to update voucher status.");
