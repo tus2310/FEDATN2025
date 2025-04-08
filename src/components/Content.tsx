@@ -41,7 +41,15 @@ const Content = (props: Props) => {
         Sản phẩm mới
       </h2>
 
-     
+      <div className="pb-[30px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 mt-8 px-4 md:px-8 lg:px-16">
+        {products
+          .filter((product: Iproduct) => product.status) // Lọc sản phẩm active
+          .slice(0, 10) // Hiển thị tối đa 10 sản phẩm
+          .map((product: Iproduct) => (
+            <article
+              key={product._id}
+              className="relative flex flex-col overflow-hidden rounded-lg shadow-md transition-transform transform hover:scale-105 hover:shadow-xl bg-white border border-gray-200"
+            >
               {/* Hình ảnh sản phẩm */}
               <NavLink to={`/product/${product._id}`} className="block">
                 <img
@@ -84,26 +92,19 @@ const Content = (props: Props) => {
       </div>
 
       <div className="bannermini flex gap-2">
-  <div className="banner1 flex-1">
-    <img src={banner1} alt="" className="w-full h-full object-cover" />
-  </div>
-  <div className="banner2 flex-1">
-    <img src={banner2} alt="" className="w-full h-full object-cover" />
-  </div>
-</div>
- <div className="banner2 flex-1">
- <img src={banner2} alt="" className="w-full h-full object-cover" />
-</div>
-</div> <div className="banner2 flex-1">
-<img src={banner2} alt="" className="w-full h-full object-cover" />
-</div>
-</div>
+        <div className="banner1 flex-1">
+          <img src={banner1} alt="" className="w-full h-full object-cover" />
+        </div>
+        <div className="banner2 flex-1">
+          <img src={banner2} alt="" className="w-full h-full object-cover" />
+        </div>
+      </div>
 
-<div className="bannerbot pt-[20px]">
-<div className="banner1 flex-1">
-    <img src={banner3} alt="" className="w-full h-full " />
-  </div>
-</div>
+      <div className="bannerbot pt-[20px]">
+        <div className="banner1 flex-1">
+          <img src={banner3} alt="" className="w-full h-full " />
+        </div>
+      </div>
     </>
   );
 };
