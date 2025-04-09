@@ -82,6 +82,23 @@ const Thongke = () => {
     },
   };
 
+  // Product Statistics Pie Chart Data
+  const productChartData = {
+    labels: ["Tổng sản phẩm", "Sản phẩm hoạt động", "Tổng biến thể"],
+    datasets: [
+      {
+        label: "Số lượng",
+        data: [
+          stats?.products.totalProducts || 0,
+          stats?.products.activeProducts || 0,
+          stats?.products.totalVariants || 0,
+        ],
+        backgroundColor: ["#1890ff", "#52c41a", "#faad14"],
+        borderColor: "#fff",
+        borderWidth: 1,
+      },
+    ],
+  };
   return (
     <div style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
       <h1 style={{ fontSize: "24px", marginBottom: "24px" }}>Thống kê tổng quan</h1>
