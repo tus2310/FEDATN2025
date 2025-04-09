@@ -12,7 +12,7 @@ const Profileinfo = (props: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   
   const [profileData, setProfileData] = useState({
-    // img: "",
+    img: "",
     name: "",
     dob: "",
     gender: "",
@@ -118,6 +118,7 @@ const Profileinfo = (props: Props) => {
       }
   
       // Update the profileData with the new image URL
+      const updatedProfileData = { ...profileData, img: uploadedImageUrl };
   
       // Send the updated profile data to the server
       const response = await axios.put(`http://localhost:28017/updateProfile/${userId}`, updatedProfileData);
@@ -140,27 +141,12 @@ const Profileinfo = (props: Props) => {
       return;
     }
   
-    if (newPassword !== confirmNewPassword) {
-      showNotification("error", "Lỗi", "Mật khẩu mới và xác nhận mật khẩu không khớp!");
-      setLoading(false);
-      return;
-    }
-  
     try {
       const response = await axios.put(`http://localhost:28017/change-password/${userId}`, {
         oldPassword,
         newPassword,
         changedBy: userId, // Bạn có thể thêm thông tin về người thay đổi nếu cần
       });
-  
-      if (response.status === 200) {
-        showNotification("success", "Thành công", "Mật khẩu đã được thay đổi thành công!");
-        setOldPassword("");
-        setNewPassword("");
-        setConfirmNewPassword("");
-      } else {
-        showNotification("error", "Lỗi", "Không thể thay đổi mật khẩu.");
-      }
     } catch (error) {
       console.error("Error changing password:", error);
       showNotification("error", "Lỗi", "Mật khẩu cũ không chính xác hoặc có lỗi khác.");
@@ -184,6 +170,15 @@ const Profileinfo = (props: Props) => {
             <h1 className="text-xl font-bold text-gray-800">{profileData.name}</h1>
             <p className="text-sm text-gray-600">{profileData.role}</p>
           </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Ảnh đại diện</label>
+          <input
+            type="file"
+            onChange={handleFileChange}
+            className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer focus:outline-none"
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-6 mt-8">
