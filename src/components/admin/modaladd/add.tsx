@@ -66,13 +66,8 @@ const Add = () => {
     const prefix = "SP";
     const digits = new Set();
     let suffix = "";
-    while (suffix.length < 5) {
+    while (suffix.length < 7) {
       const digit = Math.floor(Math.random() * 10).toString();
-      if (!digits.has(digit)) {
-        digits.add(digit);
-        suffix += digit;
-      }
-    }
     return prefix + suffix;
   };
 
@@ -122,6 +117,12 @@ const Add = () => {
             })),
         }))
         .filter((variant) => variant.color && variant.basePrice > 0 && variant.subVariants.length > 0);
+
+      if (validVariants.length === 0) {
+        showNotification("error", "Lỗi", "Phải có ít nhất một biến thể hợp lệ với sub-variant!");
+        setLoading(false);
+        return;
+      }
 
       const payload = {
         masp: values.masp,
@@ -191,8 +192,21 @@ const Add = () => {
     setVariants(updatedVariants);
   };
 
+  const addVariant = () => {
+    setVariants((prev) => [
+      ...prev,
+      { color: "", basePrice: 0, discount: undefined, subVariants: [{ specification: "", value: "", additionalPrice: 0, quantity: 0 }] },
+    ]);
+  };
+
   const removeVariant = (index: number) => {
     setVariants((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const addSubVariant = (variantIndex: number) => {
+    const updatedVariants = [...variants];
+    updatedVariants[variantIndex].subVariants.push({ specification: "", value: "", additionalPrice: 0, quantity: 0 });
+    setVariants(updatedVariants);
   };
 
   const removeSubVariant = (variantIndex: number, subIndex: number) => {
@@ -308,7 +322,12 @@ const Add = () => {
                   {variant.subVariants.map((subVariant, subIndex) => (
                     <div key={subIndex} className="grid grid-cols-5 gap-4 mb-2 items-center">
                       <Form.Item name={`specification-${variantIndex}-${subIndex}`} rules={[{ required: true, message: "Vui lòng nhập thông số!" }]}>
-  
+                        <Input
+                          placeholder="Thông số (e.g., Storage)"
+                          value={subVariant.specification}
+                          onChange={(e) => handleSubVariantChange(variantIndex, subIndex, "specification", e.target.value)}
+                          className="p-3 h-12 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600"
+                        />
                       </Form.Item>
                       <Form.Item name={`value-${variantIndex}-${subIndex}`} rules={[{ required: true, message: "Vui lòng nhập giá trị!" }]}>
                         <Input

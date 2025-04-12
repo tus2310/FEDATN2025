@@ -68,7 +68,7 @@ const Productspage = (props: Props) => {
   };
 
 
-  const sortedProducts = [...filterProduct].sort((a, b) => {
+  // const sortedProducts = [...filterProduct].sort((a, b) => {
     const aPrices = a.variants?.map((variant) => variant.basePrice) || [];
     const bPrices = b.variants?.map((variant) => variant.basePrice) || [];
 
