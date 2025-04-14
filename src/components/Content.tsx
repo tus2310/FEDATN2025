@@ -92,19 +92,19 @@ const Content = (props: Props) => {
       </div>
 
       <div className="bannermini flex gap-2">
-  <div className="banner1 flex-1">
-    <img src={banner1} alt="" className="w-full h-full object-cover" />
-  </div>
-  <div className="banner2 flex-1">
-    <img src={banner2} alt="" className="w-full h-full object-cover" />
-  </div>
-</div>
+        <div className="banner1 flex-1">
+          <img src={banner1} alt="" className="w-full h-full object-cover" />
+        </div>
+        <div className="banner2 flex-1">
+          <img src={banner2} alt="" className="w-full h-full object-cover" />
+        </div>
+      </div>
 
-<div className="bannerbot pt-[20px]">
-<div className="banner1 flex-1">
-    <img src={banner3} alt="" className="w-full h-full " />
-  </div>
-</div>
+      <div className="bannerbot pt-[20px]">
+        <div className="banner1 flex-1">
+          <img src={banner3} alt="" className="w-full h-full " />
+        </div>
+      </div>
     </>
   );
 };
