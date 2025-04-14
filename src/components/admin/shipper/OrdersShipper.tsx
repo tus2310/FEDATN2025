@@ -74,6 +74,46 @@ const OrdersShipper = (props: Props) => {
     }
   };
 
+  const handleConfirmDelivery = async (orderId: string) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.put(
+        `http://localhost:28017/orders-list/${orderId}`,
+        {
+          status: "delivered",
+          paymentstatus: "Đã Thanh Toán",
+        }
+      );
+
+      if (response.status === 200 && response.data) {
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === orderId
+              ? {
+                  ...order,
+                  status: "delivered",
+                  paymentstatus: "Đã Thanh Toán",
+                }
+              : order
+          )
+        );
+
+        // Notify the user's order history that the order has been delivered
+        await axios.put(
+          `http://localhost:28017/api/orders/${orderId}/received`,
+          {
+            status: "Đã giao", // Update the status in the user's order history
+          }
+        );
+      }
+    } catch (err) {
+      console.error("Error confirming delivery:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const handleFailedDelivery = async (orderId: string) => {
     setIsLoading(true);
     setError(null);
@@ -259,7 +299,7 @@ const OrdersShipper = (props: Props) => {
                       </button>
                     )}
 
-                    {/* {order.status === "in_progress" && (
+                    {order.status === "in_progress" && (
                       <div className="flex space-x-2">
                         <button
                           onClick={() => handleConfirmDelivery(order._id)}
@@ -277,7 +317,7 @@ const OrdersShipper = (props: Props) => {
                           </button>
                         )}
                       </div>
-                    )} */}
+                    )}
                   </td>
                 </tr>
               ))}

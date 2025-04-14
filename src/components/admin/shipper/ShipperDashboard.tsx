@@ -49,20 +49,7 @@ const ShipperDashboard = (props: Props) => {
             <h2 className="text-xl font-semibold">Tổng đơn hàng</h2>
             <p className="text-3xl font-bold mt-2">{totalOrders}</p>
           </div>
-          <div className="bg-yellow-500 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <h2 className="text-xl font-semibold">Đang xử lý đơn hàng</h2>
-            <p className="text-3xl font-bold mt-2">{pendingOrders}</p>
-          </div>
-          <div className="bg-green-500 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <h2 className="text-xl font-semibold">Đơn hàng đã giao</h2>
-            <p className="text-3xl font-bold mt-2">{deliveredOrders}</p>
-          </div>
-          <div className="bg-red-500 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <h2 className="text-xl font-semibold">Đơn hàng thất bại</h2>
-            <p className="text-3xl font-bold mt-2">{cancelledOrders}</p>
-          </div>
         </div>
-
         <div className="text-center mt-6">
           {isLoading && <p className="text-lg text-white">Loading orders...</p>}
           {error && <p className="text-red-500">{error}</p>}
