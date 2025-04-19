@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getPostById } from "../service/new"; // Import service API
 import { Inews } from "../interface/news";
+import canho from "../anh/noi-that-can-ho-cao-cap.jpg"; // Mặc định hình ảnh
 import Header from "./Header";
 import Footer from "./Footer";
 
