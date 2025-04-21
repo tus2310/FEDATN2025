@@ -36,11 +36,11 @@ const Thongke = () => {
         <Spin size="large" />
       </div>
     );
-  } 
+  }
+
   if (error) {
     return <div style={{ color: "red", textAlign: "center" }}>{error}</div>;
-  }  
-
+  }
 
   // Order Statistics Bar Chart Data
   const orderChartData = {
@@ -98,6 +98,14 @@ const Thongke = () => {
         borderWidth: 1,
       },
     ],
+  };
+
+  const productChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: "right" as const },
+      title: { display: true, text: "Thống kê sản phẩm" },
+    },
   };
 
   // Revenue Statistics Bar Chart Data
