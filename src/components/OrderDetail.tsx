@@ -14,6 +14,15 @@ const OrderDetail = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [cancelReason, setCancelReason] = useState<string>("");
 
+  // Payment method mapping
+  const paymentMethodMapping: { [key: string]: string } = {
+    credit_card: "Thẻ tín dụng",
+    paypal: "PayPal",
+    bank_transfer: "Chuyển khoản ngân hàng",
+    cash_on_delivery: "Thanh toán khi nhận hàng",
+    e_wallet: "Ví điện tử",
+  };
+
   // Order status mapping
   const orderStatusMapping: { [key: string]: string } = {
     pending: "Chờ xử lý",

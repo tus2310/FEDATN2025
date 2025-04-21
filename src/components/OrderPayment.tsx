@@ -133,6 +133,12 @@ function OrderPayment() {
     }
   };
 
+  const total = cartItems.reduce((total, item) => {
+    const quantity = item.quantity ?? 0;
+    const price = item.price ?? 0;
+    return total + price * quantity;
+  }, 0);
+
   const discountedTotal = Math.max(0, total - discount);
 
   const handleOrderSubmit = async () => {
@@ -193,6 +199,16 @@ function OrderPayment() {
               return false;
             }
           }
+
+          const availableQuantity = subVariant
+            ? subVariant.quantity
+            : variant.quantity || 0;
+          console.log(`Available quantity: ${availableQuantity}`);
+          if (availableQuantity < item.quantity) {
+            toast.error(`Sản phẩm ${item.name} không đủ số lượng trong kho.`);
+            return false;
+          }
+
           const updatedQuantity = availableQuantity - item.quantity;
           console.log(`New quantity: ${updatedQuantity}`);
 
