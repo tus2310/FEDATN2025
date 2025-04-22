@@ -66,8 +66,13 @@ const Add = () => {
     const prefix = "SP";
     const digits = new Set();
     let suffix = "";
-    while (suffix.length < 7) {
+    while (suffix.length < 5) {
       const digit = Math.floor(Math.random() * 10).toString();
+      if (!digits.has(digit)) {
+        digits.add(digit);
+        suffix += digit;
+      }
+    }
     return prefix + suffix;
   };
 
