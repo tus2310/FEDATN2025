@@ -31,7 +31,7 @@ const UpdateNews = () => {
       showNotification("error", "Lỗi", "ID bài viết bị thiếu.");
       return;
     }
-  
+
     const fetchPost = async () => {
       try {
         const post = await getPostById(id);
@@ -55,10 +55,10 @@ const UpdateNews = () => {
         );
       }
     };
-  
+
     fetchPost();
   }, [id, form]);
-  
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const newFiles = Array.from(e.target.files);
@@ -68,7 +68,6 @@ const UpdateNews = () => {
   const handleRemoveImage = (url: string) => {
     setExistingImages((prev) => prev.filter((img) => img !== url));
   };
-  
 
   const uploadImages = async (files: File[]): Promise<string[]> => {
     const urls: string[] = [];
@@ -97,35 +96,41 @@ const UpdateNews = () => {
       showNotification("error", "Lỗi", "ID bài viết bị thiếu.");
       return;
     }
-  
+
     try {
       // Upload ảnh mới
       const newImageUrls = await uploadImages(files);
-  
+
       // Kết hợp ảnh cũ và ảnh mới
       const updatedImages = [...existingImages, ...newImageUrls];
-  
+
       // Payload để gửi API
       const payload = {
         ...values,
         img: updatedImages, // Gửi cả ảnh cũ và ảnh mới
       };
-  
+
       const updatedPostData = await updatePost(id, payload);
-  
+
       if (updatedPostData) {
         showNotification("success", "Thành công", "Bài viết đã được cập nhật!");
         navigate("/admin/tintuc");
       } else {
-        showNotification("error", "Lỗi", "Không thể cập nhật bài viết, vui lòng thử lại!");
+        showNotification(
+          "error",
+          "Lỗi",
+          "Không thể cập nhật bài viết, vui lòng thử lại!"
+        );
       }
     } catch (error) {
       console.error("Lỗi khi cập nhật bài viết:", error);
-      showNotification("error", "Lỗi", "Không thể cập nhật bài viết, vui lòng thử lại!");
+      showNotification(
+        "error",
+        "Lỗi",
+        "Không thể cập nhật bài viết, vui lòng thử lại!"
+      );
     }
   };
-  
-  
 
   // const handleUploadChange = ({ fileList: newFileList }: any) => {
   //   setFiles(newFileList);
@@ -133,7 +138,9 @@ const UpdateNews = () => {
 
   return (
     <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-md space-y-6 font-[sans-serif]">
-      <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">Cập nhật Tin tức</h2>
+      <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+        Cập nhật Tin tức
+      </h2>
       <Form
         form={form}
         onFinish={onFinish}
@@ -144,7 +151,8 @@ const UpdateNews = () => {
         <Form.Item
           label="Tiêu đề"
           name="title"
-          rules={[{ required: true, message: "Vui lòng nhập tiêu đề" }]}>
+          rules={[{ required: true, message: "Vui lòng nhập tiêu đề" }]}
+        >
           <Input placeholder="Nhập tiêu đề tin tức" className="rounded" />
         </Form.Item>
 
@@ -152,50 +160,61 @@ const UpdateNews = () => {
         <Form.Item
           label="Mô tả"
           name="descriptions"
-          rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}>
-          <Input.TextArea rows={4} placeholder="Nhập mô tả" className="rounded" />
+          rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}
+        >
+          <Input.TextArea
+            rows={4}
+            placeholder="Nhập mô tả"
+            className="rounded"
+          />
         </Form.Item>
 
         {/* Nội dung */}
         <Form.Item
           label="Nội dung"
           name="content"
-          rules={[{ required: true, message: "Vui lòng nhập nội dung" }]}>
-          <Input.TextArea rows={6} placeholder="Nhập nội dung" className="rounded" />
+          rules={[{ required: true, message: "Vui lòng nhập nội dung" }]}
+        >
+          <Input.TextArea
+            rows={6}
+            placeholder="Nhập nội dung"
+            className="rounded"
+          />
         </Form.Item>
 
         {/* Hình ảnh */}
         <div>
-          
-          
           <div>
-          <label className="mt-10 mb-2 text-sm text-black block">Ảnh hiện tại:</label>
-          <div className="grid grid-cols-3 gap-4">
-            {existingImages.map((url) => (
-              <div key={url} className="relative">
-                <img
-                  src={url}
-                  alt="Product"
-                  className="w-full h-auto rounded-md border border-gray-200"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(url)}
-                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                >
-                  &times;
-                </button>
-              </div>
-            ))}
+            <label className="mt-10 mb-2 text-sm text-black block">
+              Ảnh hiện tại:
+            </label>
+            <div className="grid grid-cols-3 gap-4">
+              {existingImages.map((url) => (
+                <div key={url} className="relative">
+                  <img
+                    src={url}
+                    alt="Product"
+                    className="w-full h-auto rounded-md border border-gray-200"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(url)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Upload New Images */}
-        <div>
-          <label className="mt-10 mb-2 text-sm text-black block">Thêm ảnh mới:</label>
-          <Input type="file" multiple onChange={handleFileChange} />
-        </div>
-
+          {/* Upload New Images */}
+          <div>
+            <label className="mt-10 mb-2 text-sm text-black block">
+              Thêm ảnh mới:
+            </label>
+            <Input type="file" multiple onChange={handleFileChange} />
+          </div>
         </div>
 
         <Form.Item>
