@@ -105,11 +105,11 @@ const Success = () => {
       <div className="flex flex-col items-center p-4 lg:p-8 bg-gray-100">
         <div className="text-center bg-white p-6 rounded-lg shadow-md mb-8 max-w-2xl w-full">
           <>
-            <h1 className="text-lg font-bold">{message}</h1>
+            <h1 className="text-lg font-bold">{""}</h1>
 
             <p className="text-sm mt-2">
               Cảm ơn bạn đã mua sắm tại Click Mobile. Đơn hàng của bạn đã được
-              thanh toán thành công với mã giao dịch:{" "}
+              thanh toán thành công với mã giao dịch:{""}
               <span className="font-bold">{vnp_TransactionNo}</span>.
             </p>
             <p className="text-sm mt-2">

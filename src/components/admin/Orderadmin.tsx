@@ -18,6 +18,13 @@ const Order = (props: Props) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [selectedOrder, setSelectedOrder] = useState<IOrder | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [cancelReason, setCancelReason] = useState<string>("");
+  const [orderIdToCancel, setOrderIdToCancel] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
   const itemsPerPage = 5;
 
   const statusMapping: { [key: string]: string } = {
@@ -68,11 +75,44 @@ const Order = (props: Props) => {
     return () => clearInterval(interval);
   }, []);
 
+  const openNotification = (type: "success" | "error", description: string) => {
+    notification[type]({
+      message:
+        type === "success" ? "Xác nhận đơn hàng thành công!" : "Có lỗi xảy ra!",
+      description,
+      placement: "topRight",
+      duration: 2,
+    });
+  };
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchValue = event.target.value;
+    setSearchTerm(searchValue);
+    if (searchValue) {
+      const filtered = orders.filter((order) =>
+        order._id.toLowerCase().includes(searchValue.toLowerCase())
+      );
+      setFilteredOrders(filtered);
+    } else {
+      setFilteredOrders(orders);
+    }
+    setCurrentPage(1);
+  };
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedOrders = filteredOrders.slice(
     startIndex,
     startIndex + itemsPerPage
   );
+
+  const handleCancelOrder = (orderId: string) => {
+    if (!orderId) {
+      alert("Không tìm thấy mã đơn hàng để hủy.");
+      return;
+    }
+    setOrderIdToCancel(orderId);
+    setIsModalVisible(true);
+  };
 
   const handleOk = async () => {
     if (!cancelReason) {
@@ -167,6 +207,12 @@ const Order = (props: Props) => {
         }
       },
     });
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setCancelReason("");
+    setOrderIdToCancel(null);
   };
 
   const closeModal = () => {
