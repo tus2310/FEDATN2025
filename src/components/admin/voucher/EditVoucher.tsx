@@ -45,6 +45,19 @@ const EditVoucher = () => {
     }
   };
 
+  const onFinish = async (values: IVoucher) => {
+    if (id) {
+      try {
+        // Call the update voucher service
+        const updatedVoucher = await updateVoucher(id, values);
+        message.success("Voucher updated successfully!");
+        navigate("/admin/Vouchers");
+      } catch (error) {
+        message.error("Failed to update voucher.");
+      }
+    }
+  };
+
   return (
     <>
       <div className="max-w-6xl mx-auto p-8 bg-white shadow-xl rounded-xl">
