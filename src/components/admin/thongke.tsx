@@ -36,11 +36,11 @@ const Thongke = () => {
         <Spin size="large" />
       </div>
     );
-  } 
+  }
+
   if (error) {
     return <div style={{ color: "red", textAlign: "center" }}>{error}</div>;
-  }  
-
+  }
 
   // Order Statistics Bar Chart Data
   const orderChartData = {
@@ -99,6 +99,43 @@ const Thongke = () => {
       },
     ],
   };
+
+  const productChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: "right" as const },
+      title: { display: true, text: "Thống kê sản phẩm" },
+    },
+  };
+
+  // Revenue Statistics Bar Chart Data
+  const revenueChartData = {
+    labels: ["Tổng doanh thu", "Giá trị trung bình"],
+    datasets: [
+      {
+        label: "Doanh thu (VND)",
+        data: [stats?.revenue.totalRevenue || 0, stats?.revenue.averageOrderValue || 0],
+        backgroundColor: ["#3f8600", "#cf1322"],
+        borderColor: "#fff",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const revenueChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: "top" as const },
+      title: { display: true, text: "Thống kê doanh thu" },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: "Số tiền (VND)" },
+      },
+    },
+  };
+
   return (
     <div style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
       <h1 style={{ fontSize: "24px", marginBottom: "24px" }}>Thống kê tổng quan</h1>
