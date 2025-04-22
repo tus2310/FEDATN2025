@@ -19,7 +19,7 @@ const Productspage = (props: Props) => {
   const { categoryName } = useParams();
   const [loading, setLoading] = useState<boolean>(false);
   const [pageConfig, setPageConfig] = useState<any>();
-  const [page, setPage] = useState({ limit: 6, currentPage: 1 });
+  const [page, setPage] = useState({ limit: 18, currentPage: 1 });
 
   const fetchProducts = async (currentPage: number) => {
     setLoading(true);
@@ -27,10 +27,15 @@ const Productspage = (props: Props) => {
       const data = await getAllproducts({
         limit: page.limit,
         page: currentPage,
-        category: selectedCategories.length > 0 ? selectedCategories[0] : undefined,
+        category:
+          selectedCategories.length > 0 ? selectedCategories[0] : undefined,
         admin: "true",
       });
-      setProducts(data?.docs || []);
+      const sortedProducts = (data?.docs || []).sort(
+        (a: Iproduct, b: Iproduct) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      setProducts(sortedProducts);
       setPageConfig(data);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -53,6 +58,10 @@ const Productspage = (props: Props) => {
   }, []);
 
   useEffect(() => {
+    setPage((prev) => ({ ...prev, currentPage: 1 }));
+  }, [selectedCategories]);
+
+  useEffect(() => {
     fetchProducts(page.currentPage);
   }, [selectedCategories, page.currentPage]);
 
@@ -63,9 +72,7 @@ const Productspage = (props: Props) => {
 
   const toggleCategory = (categoryId: string) => {
     setSelectedCategories((prev) =>
-      prev.includes(categoryId)
-        ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId]
+      prev.includes(categoryId) ? [] : [categoryId]
     );
   };
 
@@ -106,11 +113,15 @@ const Productspage = (props: Props) => {
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-8">
         {/* Filter Sidebar */}
         <aside className="w-full lg:w-1/4">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Lọc sản phẩm</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            Lọc sản phẩm
+          </h2>
 
           {/* Filter by Category */}
           <div className="mb-8">
-            <h3 className="text-xl font-semibold text-gray-700 mb-4">Danh mục</h3>
+            <h3 className="text-xl font-semibold text-gray-700 mb-4">
+              Danh mục
+            </h3>
             {categories.length === 0 ? (
               <p className="text-gray-500">Sản phẩm chưa được cập nhật</p>
             ) : (
@@ -147,7 +158,9 @@ const Productspage = (props: Props) => {
 
         {/* Product List */}
         <section className="w-full lg:w-3/4">
-          <h1 className="text-3xl font-bold text-gray-800 mb-6">Sản phẩm của chúng tôi</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">
+            Sản phẩm của chúng tôi
+          </h1>
 
           {/* Display Selected Categories */}
           {selectedCategories.length > 0 && (

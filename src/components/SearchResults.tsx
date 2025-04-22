@@ -20,10 +20,11 @@ const SearchResults = () => {
 
         // Lọc sản phẩm dựa trên từ khóa
         const results: IProductLite[] = products?.docs
-          ?.filter((product: IProductLite) =>
-            searchTerm
-              ? product.name.toLowerCase().includes(searchTerm.toLowerCase())
-              : true // Nếu không có từ khóa, trả về tất cả sản phẩm
+          ?.filter(
+            (product: IProductLite) =>
+              searchTerm
+                ? product.name.toLowerCase().includes(searchTerm.toLowerCase())
+                : true // Nếu không có từ khóa, trả về tất cả sản phẩm
           )
           .map((product: IProductLite) => ({
             _id: product._id,
