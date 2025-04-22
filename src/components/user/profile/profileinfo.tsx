@@ -141,12 +141,27 @@ const Profileinfo = (props: Props) => {
       return;
     }
   
+    if (newPassword !== confirmNewPassword) {
+      showNotification("error", "Lỗi", "Mật khẩu mới và xác nhận mật khẩu không khớp!");
+      setLoading(false);
+      return;
+    }
+  
     try {
       const response = await axios.put(`http://localhost:28017/change-password/${userId}`, {
         oldPassword,
         newPassword,
         changedBy: userId, // Bạn có thể thêm thông tin về người thay đổi nếu cần
       });
+  
+      if (response.status === 200) {
+        showNotification("success", "Thành công", "Mật khẩu đã được thay đổi thành công!");
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
+      } else {
+        showNotification("error", "Lỗi", "Không thể thay đổi mật khẩu.");
+      }
     } catch (error) {
       console.error("Error changing password:", error);
       showNotification("error", "Lỗi", "Mật khẩu cũ không chính xác hoặc có lỗi khác.");

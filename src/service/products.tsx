@@ -16,6 +16,16 @@ export const getAllproducts = async ({
   variants?: IVariant[];
 }) => {
   try {
+    let url = `product-test?page=${page}&limit=${limit}&sort=-createdAt`;
+
+    if (admin === "true") {
+      url += `&admin=${admin}`;
+    }
+
+    if (category) {
+      url += `&category=${category}`;
+    }
+
     const { data } = await axiosservice.get(
       admin === "true"
         ? `product-test?page=${page}&limit=${limit}&admin=${admin}`
@@ -38,14 +48,16 @@ export const getProductByID = async (id?: string) => {
 
 export const addProduct = async (payload: any) => {
   try {
-    const response = await axios.post("http://localhost:28017/product/add", payload);
-    return response.data; 
+    const response = await axios.post(
+      "http://localhost:28017/product/add",
+      payload
+    );
+    return response.data;
   } catch (error) {
     console.error("Error adding product:", error);
-    throw error; 
+    throw error;
   }
 };
-
 
 export const updateProduct = async (id?: string, product?: IProductLite) => {
   try {
