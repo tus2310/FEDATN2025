@@ -17,8 +17,12 @@ const Content = (props: Props) => {
       try {
         setLoading(true);
         const sanpham = await getAllproducts({ limit: 12, page: 1 });
-        setProducts(sanpham.docs || []);
-        console.log(sanpham.docs, "day");
+        const sortedProducts = (sanpham.docs || []).sort(
+          (a: Iproduct, b: Iproduct) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setProducts(sortedProducts);
+        console.log(sortedProducts, "sorted products");
       } catch (error) {
         console.log(error);
       } finally {
@@ -44,7 +48,7 @@ const Content = (props: Props) => {
       <div className="pb-[30px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 mt-8 px-4 md:px-8 lg:px-16">
         {products
           .filter((product: Iproduct) => product.status) // Lọc sản phẩm active
-          .slice(0, 10) // Hiển thị tối đa 10 sản phẩm
+          .slice(0, 12) // Hiển thị tối đa 8 sản phẩm
           .map((product: Iproduct) => (
             <article
               key={product._id}

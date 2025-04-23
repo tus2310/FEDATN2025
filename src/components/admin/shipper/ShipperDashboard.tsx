@@ -34,6 +34,18 @@ const ShipperDashboard = (props: Props) => {
   const pendingOrders = orders.filter(
     (order) => order.status === "pending"
   ).length;
+  const deliveredOrders = orders.filter(
+    (order) => order.status === "delivered"
+  ).length;
+  const cancelledOrders = orders.filter(
+    (order) => order.status === "failed"
+  ).length;
+  const totalOrders = orders.length;
+
+  const handleFilterChange = (status: string) => {
+    setFilter(status);
+  };
+
   return (
     <div
       className="container mx-auto p-6 relative"

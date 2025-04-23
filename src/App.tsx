@@ -26,9 +26,6 @@ import OrderPayment from "./components/OrderPayment";
 import Order from "./components/admin/Orderadmin";
 import Success from "./components/success";
 import Donhangpage from "./components/Donhangpage";
-import AddMaterial from "./components/admin/modaladd/addmaterial";
-import { updateMaterial } from "./service/material";
-import UpdateMaterial from "./components/admin/modaladd/updatemaerial";
 import CommentDashboard from "./components/admin/CommentDashboard";
 import Donhang from "./components/Orderlisthistory";
 import Shipper from "./layout/Shipper";
@@ -86,19 +83,18 @@ function App() {
             }
           >
             <Route path="thongke" element={<Thongke />} />
-             <Route path="comments" element={<CommentDashboard />} />
+            <Route path="comments" element={<CommentDashboard />} />
             <Route path="add" element={<Add />} />
             <Route path="addNews" element={<AddNews />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="Listcategory" element={<Listcategory />} />
             <Route path="addcategory" element={<Addcategory />} />
-            <Route path="addMaterial" element={<AddMaterial />} />
             <Route path="users" element={<Users />} />
             <Route path="order" element={<Order />} />
             <Route path="vouchers" element={<ListVouchers />} />
             <Route path="vouchers/:id" element={<EditVoucher />} />
             <Route path="voucher/add" element={<AddVoucher />} />
-            
+
             <Route path="tintuc" element={<DashboardNews />} />
             {/* <Route path="dashboard/update/:id" Component={Update}></Route> */}
             <Route path="dashboard/update/:id" Component={Update}></Route>
@@ -109,10 +105,6 @@ function App() {
               path="Listcategory/updatecategory/:id"
               Component={Updatecategory}
             ></Route>
-            <Route
-              path="Material/updateMaterial/:id"
-              Component={UpdateMaterial}
-            ></Route>
           </Route>
 
           <Route
@@ -122,9 +114,7 @@ function App() {
                 <Profile />
               </Privaterouter>
             }
-          >
-
-          </Route>
+          ></Route>
           <Route
             path="/shipper"
             element={

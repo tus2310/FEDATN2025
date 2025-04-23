@@ -40,8 +40,6 @@ const OrdersShipper = (props: Props) => {
     return () => clearInterval(interval);
   }, []);
 
-<<<<<<< HEAD
-=======
   const handleInProgressOrder = async (orderId: string) => {
     setIsLoading(true);
     setError(null);
@@ -167,8 +165,10 @@ const OrdersShipper = (props: Props) => {
     }
   };
 
->>>>>>> 2d7f0d1cecbf684350969cc5da2afa7063a27924
   const indexOfLastOrder = currentPage * itemsPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - itemsPerPage;
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
@@ -272,8 +272,8 @@ const OrdersShipper = (props: Props) => {
                           ? "Đóng gói"
                           : order.status === "in_progress"
                           ? "Đang giao"
-                           : order.status === "confirm-receive"
-                           ?"Thành công"
+                          : order.status === "confirm-receive"
+                          ? "Thành công"
                           : order.status === "delivered"
                           ? "Đã giao"
                           : order.status === "cancelledOrder"

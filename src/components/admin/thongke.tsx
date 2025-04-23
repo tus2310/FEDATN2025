@@ -2,12 +2,31 @@ import React, { useEffect, useState } from "react";
 import { getStats } from "../../service/stats";
 import { Stats } from "../../interface/stats";
 import { Card, Col, Row, Statistic, Spin } from "antd";
-import { DollarOutlined, ShoppingCartOutlined, ProductOutlined } from "@ant-design/icons";
+import {
+  DollarOutlined,
+  ShoppingCartOutlined,
+  ProductOutlined,
+} from "@ant-design/icons";
 import { Bar, Pie } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from "chart.js";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+} from "chart.js";
 
 // Register Chart.js components
-ChartJS.register(ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale
+);
 
 const Thongke = () => {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -44,7 +63,13 @@ const Thongke = () => {
 
   // Order Statistics Bar Chart Data
   const orderChartData = {
-    labels: ["Tổng đơn hàng", "Đang chờ", "Đang đóng gói", "Hoàn thành", "Đã hủy"],
+    labels: [
+      "Tổng đơn hàng",
+      "Đang chờ",
+      "Đang đóng gói",
+      "Hoàn thành",
+      "Đã hủy",
+    ],
     datasets: [
       {
         label: "Số lượng đơn hàng",
@@ -114,7 +139,10 @@ const Thongke = () => {
     datasets: [
       {
         label: "Doanh thu (VND)",
-        data: [stats?.revenue.totalRevenue || 0, stats?.revenue.averageOrderValue || 0],
+        data: [
+          stats?.revenue.totalRevenue || 0,
+          stats?.revenue.averageOrderValue || 0,
+        ],
         backgroundColor: ["#3f8600", "#cf1322"],
         borderColor: "#fff",
         borderWidth: 1,
@@ -138,7 +166,9 @@ const Thongke = () => {
 
   return (
     <div style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
-      <h1 style={{ fontSize: "24px", marginBottom: "24px" }}>Thống kê tổng quan</h1>
+      <h1 style={{ fontSize: "24px", marginBottom: "24px" }}>
+        Thống kê tổng quan
+      </h1>
 
       {/* Numeric Statistics */}
       <Row gutter={[16, 16]}>
@@ -236,14 +266,14 @@ const Thongke = () => {
             <Statistic
               title="Tổng doanh thu"
               value={stats?.revenue.totalRevenue}
-              precision={2}
+              // precision={2}
               prefix={<DollarOutlined />}
               suffix="VND"
               valueStyle={{ color: "#3f8600" }}
             />
           </Card>
         </Col>
-        <Col span={12}>
+        {/* <Col span={12}>
           <Card>
             <Statistic
               title="Giá trị đơn hàng trung bình"
@@ -254,7 +284,7 @@ const Thongke = () => {
               valueStyle={{ color: "#cf1322" }}
             />
           </Card>
-        </Col>
+        </Col> */}
       </Row>
 
       {/* Charts */}
