@@ -69,10 +69,6 @@ const AddNews = () => {
     }
   };
 
-  const removeImage = (index: number) => {
-    setFiles((prev) => prev.filter((_, i) => i !== index));
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
-  };
 
   return (
     <>

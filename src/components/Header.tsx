@@ -65,25 +65,6 @@ const Header = () => {
 
   return (
     <header className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top Section */}
-        <div className="flex justify-between items-center py-4 border-b border-gray-200">
-          {/* Left Info */}
-          <div className="flex items-center space-x-6">
-            <div className="flex items-center">
-              <span className="w-px h-5 bg-gray-300 mr-3"></span>
-              <p className="text-gray-700 text-sm hover:text-gray-900 transition-colors duration-200">
-                Số điện thoại: 0344357227
-              </p>
-            </div>
-            <div className="flex items-center">
-              <span className="w-px h-5 bg-gray-300 mr-3"></span>
-              <p className="text-gray-700 text-sm hover:text-gray-900 transition-colors duration-200">
-                Email: support@clickmobile.vn
-              </p>
-            </div>
-          </div>
-
           {/* Right User Actions */}
           <div className="flex items-center space-x-4">
             {user ? (
@@ -162,6 +143,25 @@ const Header = () => {
                 )}
               </div>
             ) : (
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              {/* Top Section */}
+              <div className="flex justify-between items-center py-4 border-b border-gray-200">
+                {/* Left Info */}
+                <div className="flex items-center space-x-6">
+                  <div className="flex items-center">
+                    <span className="w-px h-5 bg-gray-300 mr-3"></span>
+                    <p className="text-gray-700 text-sm hover:text-gray-900 transition-colors duration-200">
+                      Số điện thoại: 0344357227
+                    </p>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-px h-5 bg-gray-300 mr-3"></span>
+                    <p className="text-gray-700 text-sm hover:text-gray-900 transition-colors duration-200">
+                      Email: support@clickmobile.vn
+                    </p>
+                  </div>
+                </div>
+      
               <>
                 <Link
                   to="/login"
