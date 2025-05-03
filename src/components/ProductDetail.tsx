@@ -549,18 +549,7 @@ const ProductDetail = () => {
                     <p className="text-sm text-gray-600">
                       {truncateText(product.moTa, 50)}
                     </p>
-                    <p className="text-xl font-bold text-red-600 mt-2">
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(
-                        product.variants && product.variants.length > 0
-                          ? product.variants[0].basePrice +
-                              (product.variants[0].subVariants[0]
-                                ?.additionalPrice || 0)
-                          : 0
-                      )}
-                    </p>
+                    
                   </div>
                   <div className="p-4">
                     <button className="w-full py-2 bg-gray-100 text-gray-800 font-semibold rounded-lg hover:bg-gray-200 transition-colors duration-200">
