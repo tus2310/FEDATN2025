@@ -13,6 +13,11 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Utility function to extract productId as a string
+const getProductIdString = (productId: string | { _id: string }): string => {
+  return typeof productId === "string" ? productId : productId._id.toString();
+};
+
 const Cart = () => {
   const Globalstate = useContext(Cartcontext);
   const [userId, setUserId] = useState<string | null>(null);
@@ -20,36 +25,42 @@ const Cart = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  ////////
   const [selectedItems, setSelectedItems] = useState<CartItem[]>([]);
-
   const [selectAll, setSelectAll] = useState(true);
   const [isFirstClick, setIsFirstClick] = useState(true);
-  ////////
+
   const fetchCartData = async (userId: string) => {
     setLoading(true);
     try {
       const data = await getCartByID(userId);
-      if (data) {
+      if (data && Array.isArray(data.items)) {
         setCartItems(data.items);
+      } else {
+        setCartItems([]); // Fallback to empty array if data.items is invalid
+        setError("Cart data is invalid.");
       }
     } catch (err) {
       setError("Failed to fetch cart data.");
       console.error("Error fetching cart data:", err);
+      setCartItems([]); // Fallback to empty array on error
     } finally {
       setLoading(false);
     }
   };
-  ////////
+
   useEffect(() => {
-    if (cartItems.length > 0 && selectAll) {
+    if (Array.isArray(cartItems) && cartItems.length > 0 && selectAll) {
       setSelectedItems(cartItems);
+    } else if (!selectAll) {
+      setSelectedItems([]);
     }
   }, [cartItems, selectAll]);
+
   const handleSelectItem = (item: CartItem) => {
+    const itemProductId = getProductIdString(item.productId);
     const exists = selectedItems.find(
       (i) =>
-        i.productId === item.productId &&
+        getProductIdString(i.productId) === itemProductId &&
         i.color === item.color &&
         (!i.subVariant ||
           (i.subVariant.specification === item.subVariant?.specification &&
@@ -61,7 +72,7 @@ const Cart = () => {
         prev.filter(
           (i) =>
             !(
-              i.productId === item.productId &&
+              getProductIdString(i.productId) === itemProductId &&
               i.color === item.color &&
               (!i.subVariant ||
                 (i.subVariant.specification ===
@@ -77,34 +88,46 @@ const Cart = () => {
 
   const handleToggleSelectAll = () => {
     if (isFirstClick) {
-      setSelectedItems([]); // Bỏ chọn tất cả
+      setSelectedItems([]);
       setSelectAll(false);
-      setIsFirstClick(false); // Sau lần đầu, không quay lại mặc định nữa
+      setIsFirstClick(false);
     } else {
       if (selectAll) {
-        setSelectedItems([]); // Bỏ chọn tất cả
+        setSelectedItems([]);
       } else {
-        setSelectedItems(cartItems); // Chọn tất cả
+        setSelectedItems(cartItems);
       }
       setSelectAll(!selectAll);
     }
   };
-  ///////
-  const checkForPriceChanges = async () => {
+
+  const checkForCartChanges = async () => {
     try {
+      console.log("Initiating checkout check for userId:", userId);
+      console.log("Cart items before checkout check:", cartItems);
       const response = await axios.post("http://localhost:28017/checkout", {
         userId,
       });
+      console.log("Checkout response:", response.data);
       if (response.status === 400 && response.data.message) {
+        console.log(
+          "Cart changes detected, resetting cart:",
+          response.data.message
+        );
         toast.error(response.data.message);
         setCartItems([]);
-        return "priceChanged";
+        return "cartChanged";
       }
     } catch (error: any) {
-      console.error("Error during price check:", error.response?.data || error);
+      console.error("Error during cart check:", error.response?.data || error);
       if (error.response?.status === 400 && error.response.data?.message) {
+        console.log(
+          "Cart changes detected in error catch, resetting cart:",
+          error.response.data.message
+        );
+        toast.error(error.response.data.message);
         setCartItems([]);
-        return "priceChanged";
+        return "cartChanged";
       }
     }
     return "noChange";
@@ -121,31 +144,37 @@ const Cart = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (userId) {
-      checkForPriceChanges();
-    }
-  }, [userId]);
-
   const handleRemove = async (item: CartItem) => {
     try {
+      if (!userId) {
+        toast.error("User ID is missing. Please log in again.");
+        return;
+      }
+      const productId = getProductIdString(item.productId);
       const updatedCart = await removeFromCart(
-        userId as string,
-        item.productId
+        userId,
+        productId,
+        item.color,
+        item.subVariant
       );
-      setCartItems(updatedCart.items);
+      const newItems = Array.isArray(updatedCart?.items)
+        ? updatedCart.items
+        : [];
+      setCartItems(newItems);
       toast.success("Sản phẩm đã được xóa khỏi giỏ hàng.");
       window.dispatchEvent(new Event("cartUpdated"));
     } catch (error) {
       console.error("Failed to remove item:", error);
       toast.error("Đã xảy ra lỗi khi xóa sản phẩm.");
+      setCartItems([]);
     }
   };
 
   const handleIncrease = async (item: CartItem) => {
     try {
+      const productId = getProductIdString(item.productId);
       const response = await fetch(
-        `http://localhost:28017/api/products/${item.productId}`
+        `http://localhost:28017/api/products/${productId}`
       );
       const text = await response.text();
 
@@ -169,21 +198,22 @@ const Cart = () => {
           return;
         }
 
-        const updatedItems = cartItems.map((cartItem) =>
-          cartItem.productId === item.productId &&
-          cartItem.color === item.color &&
-          (!item.subVariant ||
-            (cartItem.subVariant?.specification ===
-              item.subVariant?.specification &&
-              cartItem.subVariant?.value === item.subVariant?.value))
+        const updatedItems = cartItems.map((cartItem) => {
+          const cartItemProductId = getProductIdString(cartItem.productId);
+          return cartItemProductId === productId &&
+            cartItem.color === item.color &&
+            (!item.subVariant ||
+              (cartItem.subVariant?.specification ===
+                item.subVariant?.specification &&
+                cartItem.subVariant?.value === item.subVariant?.value))
             ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem
-        );
+            : cartItem;
+        });
         setCartItems(updatedItems);
 
         await updateCartQuantity(
           userId as string,
-          item.productId,
+          productId,
           item.quantity + 1,
           {
             color: item.color,
@@ -205,20 +235,22 @@ const Cart = () => {
   const handleDecrease = async (item: CartItem) => {
     try {
       if (item.quantity > 1) {
-        const updatedItems = cartItems.map((cartItem) =>
-          cartItem.productId === item.productId &&
-          cartItem.color === item.color &&
-          (!item.subVariant ||
-            (cartItem.subVariant?.specification ===
-              item.subVariant?.specification &&
-              cartItem.subVariant?.value === item.subVariant?.value))
+        const productId = getProductIdString(item.productId);
+        const updatedItems = cartItems.map((cartItem) => {
+          const cartItemProductId = getProductIdString(cartItem.productId);
+          return cartItemProductId === productId &&
+            cartItem.color === item.color &&
+            (!item.subVariant ||
+              (cartItem.subVariant?.specification ===
+                item.subVariant?.specification &&
+                cartItem.subVariant?.value === item.subVariant?.value))
             ? { ...cartItem, quantity: cartItem.quantity - 1 }
-            : cartItem
-        );
+            : cartItem;
+        });
         setCartItems(updatedItems);
         await updateCartQuantity(
           userId as string,
-          item.productId,
+          productId,
           item.quantity - 1,
           {
             color: item.color,
@@ -237,22 +269,60 @@ const Cart = () => {
     }
   };
 
-  /////tong tien gio hang
-  const total = cartItems.reduce((total, item) => {
-    const quantity = item.quantity ?? 0;
-    const price = item.price ?? 0;
-    return total + price * quantity;
-  }, 0);
-  ////tong tien click vào ckeckboxckeckbox
-  const selectedTotal = selectedItems.reduce((total, item) => {
-    return total + (item.price ?? 0) * (item.quantity ?? 0);
-  }, 0);
-  const handleCheckout = () => {
-    if (selectedItems.length === 0) {
-      toast.error("Vui lòng chọn sản phẩm để thanh toán");
-      return;
+  const total = Array.isArray(cartItems)
+    ? cartItems.reduce((total, item) => {
+        const quantity = item.quantity ?? 0;
+        const price = item.price ?? 0;
+        return total + price * quantity;
+      }, 0)
+    : 0;
+
+  const selectedTotal = Array.isArray(selectedItems)
+    ? selectedItems.reduce((total, item) => {
+        return total + (item.price ?? 0) * (item.quantity ?? 0);
+      }, 0)
+    : 0;
+
+  const handleCheckout = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const userStatusResponse = await axios.get(
+        `http://localhost:28017/user/${userId}/status`
+      );
+      const { active, reason } = userStatusResponse.data;
+
+      if (!active) {
+        toast.error(
+          `Your account is deactivated. Reason: ${reason || "Not specified"}`
+        );
+        return;
+      }
+
+      const cartCheckResult = await checkForCartChanges();
+      console.log("Cart check result:", cartCheckResult);
+      if (cartCheckResult === "cartChanged") {
+        console.log("Cart changed, stopping checkout process");
+        toast.warning(
+          "Items in your cart have changed. Please review your cart."
+        );
+        return;
+      }
+
+      if (selectedItems.length === 0) {
+        toast.info("Please select at least one item to checkout.");
+        return;
+      }
+
+      console.log(
+        "Proceeding to order page with selected items:",
+        selectedItems
+      );
+      navigate("/order", { state: { selectedItems } });
+    } catch (error) {
+      console.error("Failed to check user status:", error);
+      toast.error("An error occurred while checking user status.");
     }
-    navigate("/order", { state: { selectedItems } });
   };
 
   return (
@@ -270,7 +340,10 @@ const Cart = () => {
             <li className="flex justify-between py-2 text-gray-700">
               <span>Tổng số sản phẩm</span>
               <span>
-                {cartItems.reduce((sum, i) => sum + i.quantity, 0)} sản phẩm
+                {Array.isArray(cartItems)
+                  ? cartItems.reduce((sum, i) => sum + i.quantity, 0)
+                  : 0}{" "}
+                sản phẩm
               </span>
             </li>
 
@@ -311,7 +384,7 @@ const Cart = () => {
                 <tbody className="divide-y">
                   {cartItems.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="p-4 text-center">
+                      <td colSpan={8} className="p-4 text-center">
                         Giỏ hàng đang trống
                       </td>
                     </tr>
@@ -326,7 +399,8 @@ const Cart = () => {
                             type="checkbox"
                             checked={selectedItems.some(
                               (i) =>
-                                i.productId === item.productId &&
+                                getProductIdString(i.productId) ===
+                                  getProductIdString(item.productId) &&
                                 i.color === item.color &&
                                 (!i.subVariant ||
                                   (i.subVariant.specification ===
@@ -350,7 +424,7 @@ const Cart = () => {
                           {item.name}
                         </td>
                         <td className="p-4 text-gray-700 font-medium">
-                          {item.color || "N/A"}
+                          {item.color}
                         </td>
                         <td className="p-4 text-gray-700 font-medium">
                           {item.subVariant
