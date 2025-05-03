@@ -18,27 +18,25 @@ const Productspage = (props: Props) => {
   const [sortOption, setSortOption] = useState<string>("");
   const { categoryName } = useParams();
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [pageConfig, setPageConfig] = useState<any>();
   const [page, setPage] = useState({ limit: 18, currentPage: 1 });
 
   const fetchProducts = async (currentPage: number) => {
     setLoading(true);
+    setError(null);
     try {
       const data = await getAllproducts({
         limit: page.limit,
         page: currentPage,
         category:
           selectedCategories.length > 0 ? selectedCategories[0] : undefined,
-        admin: "true",
       });
-      const sortedProducts = (data?.docs || []).sort(
-        (a: Iproduct, b: Iproduct) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-      setProducts(sortedProducts);
+      setProducts(data?.docs || []);
       setPageConfig(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching products:", error);
+      setError("Không thể tải sản phẩm. Vui lòng thử lại sau.");
     } finally {
       setLoading(false);
     }
@@ -46,10 +44,11 @@ const Productspage = (props: Props) => {
 
   const fetchCategories = async () => {
     try {
-      const categoryData = await getAllCategories();
-      setCategories(categoryData);
+      const categoryData = await getAllCategories("active"); // Fetch only active categories
+      setCategories(Array.isArray(categoryData) ? categoryData : []);
     } catch (error) {
       console.error("Error fetching categories:", error);
+      setError("Không thể tải danh mục. Vui lòng thử lại sau.");
     }
   };
 
@@ -80,12 +79,17 @@ const Productspage = (props: Props) => {
     return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
   };
 
-  const filterProduct = products.filter(
-    (product) =>
-      (selectedCategories.length === 0 ||
-        selectedCategories.includes(product.category._id)) &&
-      product.status
-  );
+  const filterProduct = products.filter((product) => {
+    const productCategoryId =
+      typeof product.category === "string"
+        ? product.category
+        : product.category?._id;
+    const matchesCategory =
+      selectedCategories.length === 0 ||
+      (productCategoryId && selectedCategories.includes(productCategoryId));
+    const isActive = product.status === true;
+    return matchesCategory && isActive;
+  });
 
   const sortedProducts = [...filterProduct].sort((a, b) => {
     const aPrices = a.variants?.map((variant) => variant.basePrice) || [];
@@ -101,10 +105,21 @@ const Productspage = (props: Props) => {
       return aMinPrice - bMinPrice;
     } else if (sortOption === "desc") {
       return bMaxPrice - aMaxPrice;
-    } else {
-      return 0;
     }
+    return 0;
   });
+
+  if (error) {
+    return (
+      <>
+        <Header />
+        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-red-500">{error}</p>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
@@ -123,7 +138,7 @@ const Productspage = (props: Props) => {
               Danh mục
             </h3>
             {categories.length === 0 ? (
-              <p className="text-gray-500">Sản phẩm chưa được cập nhật</p>
+              <p className="text-gray-500">Không có danh mục hoạt động</p>
             ) : (
               <div className="space-y-3">
                 {categories.map((category) => (
@@ -196,6 +211,10 @@ const Productspage = (props: Props) => {
                       src={product.img[0]}
                       alt={product.name}
                       className="h-64 w-full object-cover rounded-t-lg hover:opacity-95 transition-opacity duration-200"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "https://via.placeholder.com/150";
+                      }}
                     />
                   </NavLink>
                   <div className="p-4 flex flex-col flex-grow">
@@ -203,11 +222,16 @@ const Productspage = (props: Props) => {
                       {product.name}
                     </h2>
                     <p className="text-sm text-gray-600 mt-1">
-                      {product.category.name}
+                      {product.category?.name || "Không có danh mục"}
                     </p>
                     <p className="text-sm text-gray-600 mt-1">
                       {truncateText(product.moTa, 50)}
                     </p>
+                    {product.discountCode && (
+                      <p className="text-sm text-green-600 mt-1">
+                        Mã giảm giá: {product.discountCode}
+                      </p>
+                    )}
                     <p className="text-xl font-bold text-red-600 mt-2">
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
