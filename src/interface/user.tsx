@@ -16,7 +16,7 @@ export interface IUser {
   export type IUserCart = Pick<IUser,'_id'>
   export type IUserLite = Pick<IUser, 'role' >
   export interface PUser {
- 
+    status: "active" | "deactive"; 
     id: string;
     _id: string;
     name: string;
