@@ -1,12 +1,15 @@
 import { axiosservice } from "../config/API";
 import { IcategoryLite } from "../interface/category";
 
-export const getAllCategories = async () => {
+export const getAllCategories = async (status?: string) => {
   try {
-    const { data } = await axiosservice.get("category");
+    // Construct the URL with optional status query parameter
+    const url = status ? `/category?status=${status}` : "/category";
+    const { data } = await axiosservice.get(url);
     return data;
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching categories:", error);
+    throw error;
   }
 };
 
@@ -15,7 +18,8 @@ export const getCategoryByID = async (id?: string) => {
     const { data } = await axiosservice.get(`/category/${id}`);
     return data;
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching category by ID:", error);
+    throw error;
   }
 };
 
@@ -24,7 +28,8 @@ export const addCategory = async (category: IcategoryLite) => {
     const { data } = await axiosservice.post("addcategory", category);
     return data;
   } catch (error) {
-    console.log(error);
+    console.error("Error adding category:", error);
+    throw error;
   }
 };
 
@@ -33,7 +38,7 @@ export const updateCategory = async (id?: string, category?: IcategoryLite) => {
     const { data } = await axiosservice.put(`/updatecategory/${id}`, category);
     return data;
   } catch (error: any) {
-    console.log(
+    console.error(
       "Error updating category:",
       error.response?.data || error.message
     );
@@ -42,11 +47,21 @@ export const updateCategory = async (id?: string, category?: IcategoryLite) => {
 };
 
 export const deactivateCategory = async (id: string) => {
-  const { data } = await axiosservice.put(`/category/deactivate/${id}`);
-  return data;
+  try {
+    const { data } = await axiosservice.put(`/category/deactivate/${id}`);
+    return data;
+  } catch (error) {
+    console.error("Error deactivating category:", error);
+    throw error;
+  }
 };
 
 export const activateCategory = async (id: string) => {
-  const { data } = await axiosservice.put(`/category/activate/${id}`);
-  return data;
+  try {
+    const { data } = await axiosservice.put(`/category/activate/${id}`);
+    return data;
+  } catch (error) {
+    console.error("Error activating category:", error);
+    throw error;
+  }
 };
