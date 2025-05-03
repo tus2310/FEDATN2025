@@ -57,19 +57,6 @@ const Users = (props: Props) => {
     }
   };
 
-  useEffect(() => {
-    const fetchDeactivationHistory = async () => {
-      try {
-        const data = await getDeactivationHistory();
-        setDeactivationHistory(data);
-      } catch (error) {
-        console.error("Error fetching deactivation history:", error);
-      }
-    };
-    fetchUsers();
-    fetchDeactivationHistory();
-  }, []);
-
   const deactivateUserById = async (id: string) => {
     let selectedReasonLocal = "";
     let tempReason = "";
