@@ -1,25 +1,24 @@
-export interface ProductStats {
+export interface Stats {
+  orders: {
+    totalOrders: number;
+    pendingOrders: number;
+    packagingOrders: number;
+    completedOrders: number;
+    canceledOrders: number;
+  };
+  products: {
     totalProducts: number;
     activeProducts: number;
     totalVariants: number;
     totalStock: number;
-  }
-  
-  export interface OrderStats {
-    totalOrders: number;
-    pendingOrders: number;
-    packagingOrders: number; // Add this
-    completedOrders: number;
-    canceledOrders: number;
-  }
-  
-  export interface RevenueStats {
+  };
+  revenue: {
     totalRevenue: number;
     averageOrderValue: number;
-  }
-  
-  export interface Stats {
-    products: ProductStats;
-    orders: OrderStats;
-    revenue: RevenueStats;
-  }
+  };
+  timeline?: {
+    date: string; // e.g., "2025-05-01"
+    totalOrders: number;
+    totalRevenue: number;
+  }[]; // Array of timeline data
+}
