@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import { getCartByID } from "../service/cart";
-
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { IOrderData, placeOrder } from "../service/order";
 import { createVNPayPayment } from "../service/payment";
@@ -11,31 +10,19 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { CartItem } from "../interface/cart";
 
-// Ensure ICartItem matches your updated schema
-interface ISubVariant {
-  specification: string;
-  value: string;
-}
-
-interface ICartItem {
-  productId: string; // Assuming string since it’s populated as ObjectId.toString()
-  name: string;
-  price: number;
-  img: string;
-  quantity: number;
-  color: string;
-  subVariant?: ISubVariant;
-}
-
 function OrderPayment() {
   const location = useLocation();
   const selectedItems = location.state?.selectedItems as CartItem[];
-  const [cartItems, setCartItems] = useState<ICartItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("");
   const [user, setUser] = useState<string>("");
   const [voucherCode, setVoucherCode] = useState<string>("");
-  const [discount, setDiscount] = useState<number>(0);
+  const [discount, setDiscount] = useState<{
+    discountAmount: number;
+    discountPercentage?: number;
+    description?: string;
+  }>({ discountAmount: 0 });
   const [customerDetails, setCustomerDetails] = useState({
     name: "",
     phone: "",
@@ -127,26 +114,33 @@ function OrderPayment() {
         "http://localhost:28017/voucher/apply",
         { code: voucherCode }
       );
-      setDiscount(response.data.discountAmount);
+      setDiscount({
+        discountAmount: response.data.discountAmount,
+        discountPercentage: response.data.discountPercentage,
+        description: response.data.description,
+      });
       toast.success(
-        `Áp dụng mã giảm giá thành công! Giảm ${response.data.discountAmount} VND.`
+        `Áp dụng mã giảm giá thành công! Giảm ${new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(response.data.discountAmount)}${
+          response.data.discountPercentage
+            ? ` (${response.data.discountPercentage}%)`
+            : ""
+        }.`
       );
-    } catch (error) {
-      toast.error("Không thể áp dụng mã giảm giá.");
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message || "Không thể áp dụng mã giảm giá."
+      );
     }
   };
-
-  // const total = cartItems.reduce((total, item) => {
-  //   const quantity = item.quantity ?? 0;
-  //   const price = item.price ?? 0;
-  //   return total + price * quantity;
-  // }, 0);
 
   const selectedTotal = selectedItems.reduce((total, item) => {
     return total + (item.price ?? 0) * (item.quantity ?? 0);
   }, 0);
 
-  const discountedTotal = Math.max(0, selectedTotal - discount);
+  const discountedTotal = Math.max(0, selectedTotal - discount.discountAmount);
 
   const handleOrderSubmit = async () => {
     if (!selectedPaymentMethod) {
@@ -154,15 +148,27 @@ function OrderPayment() {
       return;
     }
 
+    // Validate customer details
+    if (
+      !customerDetails.name ||
+      !customerDetails.phone ||
+      !customerDetails.email ||
+      !customerDetails.address
+    ) {
+      toast.error("Vui lòng điền đầy đủ thông tin khách hàng!");
+      return;
+    }
+
     const orderData: IOrderData = {
       userId: user,
-      items: cartItems,
-      amount: discountedTotal,
+      items: selectedItems,
+      amount: discountedTotal, // Frontend-calculated amount, will be recalculated on backend
       paymentMethod: selectedPaymentMethod,
       customerDetails: customerDetails,
+      voucherCode: voucherCode || undefined, // Pass the voucher code to the backend
     };
 
-    const updateProductQuantities = async (items: ICartItem[]) => {
+    const updateProductQuantities = async (items: CartItem[]) => {
       try {
         for (const item of items) {
           console.log(
@@ -262,28 +268,34 @@ function OrderPayment() {
     };
 
     try {
-      await updateProductQuantities(cartItems);
+      const quantityUpdateSuccess = await updateProductQuantities(
+        selectedItems
+      );
+      if (!quantityUpdateSuccess) {
+        return;
+      }
+
       if (selectedPaymentMethod === "cash_on_delivery") {
-        await placeOrder(orderData);
+        const orderResponse = await placeOrder(orderData);
         toast.success(
           "Cảm ơn bạn! Đơn hàng của bạn đã được xác nhận thành công.",
           { position: "top-right" }
         );
-        setCartItems([]);
-        navigate("/success", { state: { orderData } });
+        await fetchCartData(user);
+        navigate("/success", { state: { order: orderResponse } });
       } else if (selectedPaymentMethod === "vnpay") {
-        await placeOrder(orderData);
+        const orderResponse = await placeOrder(orderData);
         const paymentUrl = await createVNPayPayment({
           userId: user,
           paymentMethod: selectedPaymentMethod,
           amount: discountedTotal,
         });
-        setCartItems([]);
-        window.location.href = paymentUrl; // Redirect to VNPay
+        window.location.href = paymentUrl;
       }
-    } catch (error) {
+    } catch (error: any) {
       toast.error(
-        "Rất tiếc! Đã có lỗi xảy ra khi xác nhận đơn hàng. Vui lòng thử lại.",
+        error.message ||
+          "Rất tiếc! Đã có lỗi xảy ra khi xác nhận đơn hàng. Vui lòng thử lại.",
         { position: "top-right" }
       );
     }
@@ -395,11 +407,11 @@ function OrderPayment() {
         {/* Right Column */}
         <div className="w-full max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold mb-4">
-            Giỏ hàng ({cartItems.length} sản phẩm)
+            Đơn hàng ({selectedItems.length} sản phẩm)
           </h2>
           {selectedItems.map((item) => (
             <div
-              key={item.productId}
+              key={item.productId.toString()} // Ensure productId is a string
               className="flex items-center justify-between mb-4"
             >
               <div className="flex items-center">
@@ -438,17 +450,27 @@ function OrderPayment() {
                 }).format(selectedTotal)}
               </span>
             </div>
-            {discount > 0 && (
-              <div className="flex justify-between text-green-500">
-                <span>Giảm giá</span>
-                <span>
-                  -{" "}
-                  {new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  }).format(discount)}
-                </span>
-              </div>
+            {discount.discountAmount > 0 && (
+              <>
+                <div className="flex justify-between text-green-500">
+                  <span>Giảm giá</span>
+                  <span>
+                    -{" "}
+                    {new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(discount.discountAmount)}
+                    {discount.discountPercentage &&
+                      ` (${discount.discountPercentage}%)`}
+                  </span>
+                </div>
+                {discount.description && (
+                  <div className="text-sm text-gray-500">
+                    <span>Mô tả: </span>
+                    <span>{discount.description}</span>
+                  </div>
+                )}
+              </>
             )}
 
             <div className="mt-4">
@@ -481,7 +503,6 @@ function OrderPayment() {
             </div>
           </div>
 
-          {/* Order confirmation button */}
           <div className="mt-6 flex justify-between items-center">
             <NavLink to={`/Cart/${user}`} className="text-blue-500">
               Quay về giỏ hàng

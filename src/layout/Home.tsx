@@ -1,22 +1,22 @@
-import React from 'react'
-import Header from '../components/Header'
-import Banner from '../components/Banner'
-import Content from '../components/Content'
-import Footer from '../components/Footer'
-import { Outlet } from 'react-router-dom'
+import React from "react";
+import Header from "../components/Header";
+import Banner from "../components/Banner";
+import Content from "../components/Content";
+import Footer from "../components/Footer";
+import { Outlet } from "react-router-dom";
 
-type Props = {}
+type Props = {};
 
 const Home = (props: Props) => {
   return (
     <>
-    <Header/>
-    <Banner/>
-    <Content/>
-    <Outlet/>
-    <Footer/>
+      <Header />
+      <Banner />
+      <Content />
+      <Outlet />
+      <Footer />
     </>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
