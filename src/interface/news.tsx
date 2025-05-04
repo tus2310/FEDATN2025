@@ -6,6 +6,6 @@ export interface Inews {
   descriptions: string;
 }
 export type InewsLite = Pick<
-  Inews,
-  "_id" | "title" | "img" | "content" | "descriptions"
+Inews,
+  "_id" | "title" | "img" | "content" | "descriptions" 
 >;
