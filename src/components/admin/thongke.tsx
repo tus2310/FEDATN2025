@@ -7,7 +7,7 @@ import {
   ShoppingCartOutlined,
   ProductOutlined,
 } from "@ant-design/icons";
-import { Bar, Pie } from "react-chartjs-2";
+import { Bar, Pie, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -16,6 +16,8 @@ import {
   BarElement,
   CategoryScale,
   LinearScale,
+  LineElement,
+  PointElement,
 } from "chart.js";
 
 // Register Chart.js components
@@ -25,7 +27,9 @@ ChartJS.register(
   Legend,
   BarElement,
   CategoryScale,
-  LinearScale
+  LinearScale,
+  LineElement,
+  PointElement
 );
 
 const Thongke = () => {
@@ -63,13 +67,7 @@ const Thongke = () => {
 
   // Order Statistics Bar Chart Data
   const orderChartData = {
-    labels: [
-      "Tổng đơn hàng",
-      "Đang chờ",
-      "Đang đóng gói",
-      "Hoàn thành",
-      "Đã hủy",
-    ],
+    labels: ["Tổng đơn hàng", "Đang chờ", "Đang đóng gói", "Hoàn thành", "Đã hủy"],
     datasets: [
       {
         label: "Số lượng đơn hàng",
@@ -81,11 +79,11 @@ const Thongke = () => {
           stats?.orders.canceledOrders || 0,
         ],
         backgroundColor: [
-          "#1890ff", // Blue for total
-          "#faad14", // Yellow for pending
-          "#722ed1", // Purple for packaging
-          "#52c41a", // Green for completed
-          "#f5222d", // Red for canceled
+          "#1890ff",
+          "#faad14",
+          "#722ed1",
+          "#52c41a",
+          "#f5222d",
         ],
         borderColor: "#fff",
         borderWidth: 1,
@@ -139,10 +137,7 @@ const Thongke = () => {
     datasets: [
       {
         label: "Doanh thu (VND)",
-        data: [
-          stats?.revenue.totalRevenue || 0,
-          stats?.revenue.averageOrderValue || 0,
-        ],
+        data: [stats?.revenue.totalRevenue || 0, stats?.revenue.averageOrderValue || 0],
         backgroundColor: ["#3f8600", "#cf1322"],
         borderColor: "#fff",
         borderWidth: 1,
@@ -164,11 +159,49 @@ const Thongke = () => {
     },
   };
 
+  // Timeline Statistics Line Chart Data
+  const timelineChartData = {
+    labels: stats?.timeline?.map((item) => item.date) || [],
+    datasets: [
+      {
+        label: "Tổng đơn hàng",
+        data: stats?.timeline?.map((item) => item.totalOrders) || [],
+        borderColor: "#1890ff",
+        backgroundColor: "rgba(24, 144, 255, 0.2)",
+        fill: true,
+        tension: 0.4,
+      },
+      {
+        label: "Tổng doanh thu (VND)",
+        data: stats?.timeline?.map((item) => item.totalRevenue) || [],
+        borderColor: "#3f8600",
+        backgroundColor: "rgba(63, 134, 0, 0.2)",
+        fill: true,
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const timelineChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: "top" as const },
+      title: { display: true, text: "Xu hướng theo thời gian" },
+    },
+    scales: {
+      x: {
+        title: { display: true, text: "Ngày" },
+      },
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: "Số lượng / Doanh thu (VND)" },
+      },
+    },
+  };
+
   return (
     <div style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
-      <h1 style={{ fontSize: "24px", marginBottom: "24px" }}>
-        Thống kê tổng quan
-      </h1>
+      <h1 style={{ fontSize: "24px", marginBottom: "24px" }}>Thống kê tổng quan</h1>
 
       {/* Numeric Statistics */}
       <Row gutter={[16, 16]}>
@@ -266,14 +299,14 @@ const Thongke = () => {
             <Statistic
               title="Tổng doanh thu"
               value={stats?.revenue.totalRevenue}
-              // precision={2}
+              precision={2}
               prefix={<DollarOutlined />}
               suffix="VND"
               valueStyle={{ color: "#3f8600" }}
             />
           </Card>
         </Col>
-        {/* <Col span={12}>
+        <Col span={12}>
           <Card>
             <Statistic
               title="Giá trị đơn hàng trung bình"
@@ -284,7 +317,7 @@ const Thongke = () => {
               valueStyle={{ color: "#cf1322" }}
             />
           </Card>
-        </Col> */}
+        </Col>
       </Row>
 
       {/* Charts */}
@@ -304,6 +337,11 @@ const Thongke = () => {
         <Col span={12}>
           <Card title="Biểu đồ doanh thu">
             <Bar data={revenueChartData} options={revenueChartOptions} />
+          </Card>
+        </Col>
+        <Col span={12}>
+          <Card title="Xu hướng theo thời gian">
+            <Line data={timelineChartData} options={timelineChartOptions} />
           </Card>
         </Col>
       </Row>
