@@ -311,7 +311,7 @@ const Thongke = () => {
             <Statistic
               title="Giá trị đơn hàng trung bình"
               value={stats?.revenue.averageOrderValue}
-              precision={2}
+              precision={0}
               prefix={<DollarOutlined />}
               suffix="VND"
               valueStyle={{ color: "#cf1322" }}
