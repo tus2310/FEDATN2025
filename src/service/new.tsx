@@ -18,20 +18,19 @@ export const getAllPosts = async (): Promise<InewsLite[] | null> => {
 // Lấy bài viết theo ID
 // Lấy bài viết theo ID
 export const getPostById = async (id?: string) => {
-  try {
-    if (!id) return null; // Tránh gửi yêu cầu nếu không có id
-    const { data } = await axiosservice.get(`/post/${id}`);
-    return data;
-  } catch (error) {
-    console.log("Lỗi khi lấy bài viết:", error);
-    return null; // Trả về null nếu có lỗi
-  }
-};
+    try {
+      if (!id) return null; // Tránh gửi yêu cầu nếu không có id
+      const { data } = await axiosservice.get(`/post/${id}`);
+      return data;
+    } catch (error) {
+      console.log("Lỗi khi lấy bài viết:", error);
+      return null;  // Trả về null nếu có lỗi
+    }
+  };
+  
 
 // Thêm mới bài viết
-export const createPost = async (
-  post: Omit<Inews, "_id">
-): Promise<Inews | null> => {
+export const createPost = async (post: Omit<Inews, "_id">): Promise<Inews | null> => {
   try {
     const { data } = await axiosservice.post("/posts/create", post);
     return data.data; // Đảm bảo trả về bài viết mới được tạo
