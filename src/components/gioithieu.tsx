@@ -64,9 +64,7 @@ const Gioithieu = () => {
             </div>
           </div>
 
-          <h2 className="text-3xl font-semibold text-center mb-8">
-            Tầm nhìn và sứ mệnh của Chúng Tôi
-          </h2>
+         
 
           <div className="flex flex-col md:flex-row items-center mb-8">
             <div className="w-full md:w-1/2 mb-4 md:pr-4">
@@ -91,7 +89,9 @@ const Gioithieu = () => {
               </p>
             </div>
           </div>
-
+          <h2 className="text-3xl font-semibold text-center mb-8">
+            Tầm nhìn và sứ mệnh của Chúng Tôi
+          </h2>
           <div className="flex flex-col md:flex-row items-center mb-8">
             <div className="w-full md:w-1/2 mb-4 md:pr-4">
               <img

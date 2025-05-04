@@ -14,21 +14,21 @@ const OrderDetail = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [cancelReason, setCancelReason] = useState<string>("");
 
-  const paymentMethodMapping: { [key: string]: string } = {
-    credit_card: "Thẻ tín dụng",
-    paypal: "PayPal",
-    bank_transfer: "Chuyển khoản ngân hàng",
-    cash_on_delivery: "Thanh toán khi nhận hàng",
-    e_wallet: "Ví điện tử",
-  };
+  // const paymentMethodMapping: { [key: string]: string } = {
+  //   credit_card: "Thẻ tín dụng",
+  //   paypal: "PayPal",
+  //   bank_transfer: "Chuyển khoản ngân hàng",
+  //   cash_on_delivery: "Thanh toán khi nhận hàng",
+  //   e_wallet: "Ví điện tử",
+  // };
 
-  const orderStatusMapping: { [key: string]: string } = {
-    pending: "Chờ xử lý",
-    processing: "Đang xử lý",
-    shipped: "Đã giao",
-    completed: "Hoàn thành",
-    canceled: "Đã hủy",
-  };
+  // const orderStatusMapping: { [key: string]: string } = {
+  //   pending: "Chờ xử lý",
+  //   processing: "Đang xử lý",
+  //   shipped: "Đã giao",
+  //   completed: "Hoàn thành",
+  //   canceled: "Đã hủy",
+  // };
 
   useEffect(() => {
     const fetchOrder = async () => {

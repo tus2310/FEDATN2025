@@ -121,11 +121,11 @@ const Footer = () => {
               cskh@thegioididong.com
             </a>
           </p>
-          <div className="flex justify-center gap-4 mt-4">
+          {/* <div className="flex justify-center gap-4 mt-4">
             <img src="/dmca.png" alt="DMCA" className="h-6" />
             <img src="/protected.png" alt="Protected" className="h-6" />
             <img src="/bocongthuong.png" alt="Bộ Công Thương" className="h-6" />
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>

@@ -132,9 +132,9 @@ const UpdateNews = () => {
     }
   };
 
-  // const handleUploadChange = ({ fileList: newFileList }: any) => {
-  //   setFiles(newFileList);
-  // };
+  const handleUploadChange = ({ fileList: newFileList }: any) => {
+    setFiles(newFileList);
+  };
 
   return (
     <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-md space-y-6 font-[sans-serif]">

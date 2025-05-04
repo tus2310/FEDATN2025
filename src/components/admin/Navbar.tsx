@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import logo from "./img/logo.png";
+import logo from "../img/logo2.png";
 type Props = {};
 
 const Navbar = (props: Props) => {
@@ -62,7 +62,6 @@ const Navbar = (props: Props) => {
                 </NavLink>
               </li>
 
-              
               <li>
                 <button
                   onClick={handleLogout}
@@ -79,14 +78,14 @@ const Navbar = (props: Props) => {
                   Chức năng:
                 </h2>
                 <ul className="space-y-2 text-md">
-                <li>
-                <NavLink
-                  to="/admin/thongke"
-                  className="flex items-center px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition"
-                >
-                  Thống kê
-                </NavLink>
-              </li>
+                  <li>
+                    <NavLink
+                      to="/admin/thongke"
+                      className="flex items-center px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition"
+                    >
+                      Thống kê
+                    </NavLink>
+                  </li>
                   <li>
                     <NavLink
                       to="/admin/users"
@@ -127,7 +126,7 @@ const Navbar = (props: Props) => {
                       Danh mục
                     </NavLink>
                   </li>
-                 
+
                   <li>
                     <NavLink
                       to="/admin/dashboard"
@@ -154,7 +153,6 @@ const Navbar = (props: Props) => {
                   Chức năng:
                 </h2>
                 <ul className="space-y-2 text-md">
-                  
                   <li>
                     <NavLink
                       to="/shipper/orders"

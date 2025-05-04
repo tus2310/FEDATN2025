@@ -25,7 +25,7 @@ const Order = (props: Props) => {
   const [orderIdToCancel, setOrderIdToCancel] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
 
   const statusMapping: { [key: string]: string } = {
     pending: "Chờ xử lý",
@@ -218,7 +218,7 @@ const Order = (props: Props) => {
   const closeModal = () => {
     setSelectedOrder(null);
   };
-
+  const user = JSON.parse(sessionStorage.getItem("user") || "{}");
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-lg p-6">
@@ -477,6 +477,22 @@ const Order = (props: Props) => {
                     {selectedOrder.customerDetails.notes}
                   </p>
                 )}
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                Tài khoản khách hàng
+              </h2>
+              <div className="space-y-2 text-gray-700">
+                <p>
+                  <span className="font-semibold"> Tài khoản:</span>{" "}
+                  {user?.info?.name || "Không có dữ liệu"}
+                </p>
+                <p>
+                  <span className="font-semibold">Email:</span>{" "}
+                  {user?.info?.email || "Không có dữ liệu"}
+                </p>
               </div>
             </div>
 
