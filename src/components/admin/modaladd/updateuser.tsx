@@ -41,8 +41,7 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ userId, onClose }) => {
       if (updatedUser) {
         messageApi.success("User role updated successfully!");
         form.resetFields();
-        onClose(); 
-        
+        onClose();
       } else {
         messageApi.error("Unable to update user.");
       }
@@ -77,7 +76,10 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ userId, onClose }) => {
             <Option value="shipper">Shipper</Option>
           </Select>
         </Form.Item>
-        <button  type="submit" className="focus:outline-none text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-6 py-4 mb-[10px] transition">
+        <button
+          type="submit"
+          className="focus:outline-none text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-6 py-4 mb-[10px] transition"
+        >
           Update Role
         </button>
       </Form>

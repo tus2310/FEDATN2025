@@ -6,7 +6,11 @@ import { getAllCategories } from "../../../service/category";
 import { upload } from "../../../service/upload";
 import LoadingComponent from "../../Loading";
 import { useNavigate, useParams } from "react-router-dom";
-import { IProductLite, ISubVariant, IVariant } from "../../../interface/products";
+import {
+  IProductLite,
+  ISubVariant,
+  IVariant,
+} from "../../../interface/products";
 
 const ProductUpdate = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,7 +23,11 @@ const ProductUpdate = () => {
   const [variants, setVariants] = useState<IVariant[]>([]);
   const navigate = useNavigate();
 
-  const showNotification = (type: "success" | "error", title: string, description: string) => {
+  const showNotification = (
+    type: "success" | "error",
+    title: string,
+    description: string
+  ) => {
     notification[type]({
       message: title,
       description,
@@ -34,7 +42,11 @@ const ProductUpdate = () => {
         setCategory(data);
       } catch (error) {
         console.error("Error fetching categories:", error);
-        showNotification("error", "Lỗi", "Không thể tải danh mục, vui lòng thử lại!");
+        showNotification(
+          "error",
+          "Lỗi",
+          "Không thể tải danh mục, vui lòng thử lại!"
+        );
       }
     };
 
@@ -49,12 +61,19 @@ const ProductUpdate = () => {
           name: productData.name,
           moTa: productData.moTa,
           brand: productData.brand,
-          category: typeof productData.category === "string" ? productData.category : productData.category._id,
+          category:
+            typeof productData.category === "string"
+              ? productData.category
+              : productData.category._id,
         });
         console.log("Product data:", productData); // Debug log
       } catch (error) {
         console.error("Error fetching product:", error);
-        showNotification("error", "Lỗi", "Không thể tải sản phẩm, vui lòng thử lại!");
+        showNotification(
+          "error",
+          "Lỗi",
+          "Không thể tải sản phẩm, vui lòng thử lại!"
+        );
       }
     };
 
@@ -84,7 +103,11 @@ const ProductUpdate = () => {
         urls.push(response.payload[0].url);
       } catch (error) {
         console.error("Error uploading image:", error);
-        showNotification("error", "Lỗi tải ảnh", "Không thể tải ảnh lên, vui lòng thử lại!");
+        showNotification(
+          "error",
+          "Lỗi tải ảnh",
+          "Không thể tải ảnh lên, vui lòng thử lại!"
+        );
       }
     }
     return urls;
@@ -93,7 +116,14 @@ const ProductUpdate = () => {
   const addVariant = () => {
     setVariants((prev) => [
       ...prev,
-      { color: "", basePrice: 0, discount: undefined, subVariants: [{ specification: "", value: "", additionalPrice: 0, quantity: 0 }] },
+      {
+        color: "",
+        basePrice: 0,
+        discount: undefined,
+        subVariants: [
+          { specification: "", value: "", additionalPrice: 0, quantity: 0 },
+        ],
+      },
     ]);
   };
 
@@ -103,29 +133,46 @@ const ProductUpdate = () => {
 
   const addSubVariant = (variantIndex: number) => {
     const updatedVariants = [...variants];
-    updatedVariants[variantIndex].subVariants.push({ specification: "", value: "", additionalPrice: 0, quantity: 0 });
+    updatedVariants[variantIndex].subVariants.push({
+      specification: "",
+      value: "",
+      additionalPrice: 0,
+      quantity: 0,
+    });
     setVariants(updatedVariants);
   };
 
   const removeSubVariant = (variantIndex: number, subIndex: number) => {
     const updatedVariants = [...variants];
-    updatedVariants[variantIndex].subVariants = updatedVariants[variantIndex].subVariants.filter((_, i) => i !== subIndex);
+    updatedVariants[variantIndex].subVariants = updatedVariants[
+      variantIndex
+    ].subVariants.filter((_, i) => i !== subIndex);
     setVariants(updatedVariants);
   };
 
-  const handleVariantChange = (index: number, key: keyof IVariant, value: string | number | undefined) => {
+  const handleVariantChange = (
+    index: number,
+    key: keyof IVariant,
+    value: string | number | undefined
+  ) => {
     const newVariants = [...variants];
     if (key === "color") {
       newVariants[index][key] = value as string;
       const colors = newVariants.map((v) => v.color);
       if (colors.filter((c) => c === value).length > 1) {
-        showNotification("error", "Lỗi", "Màu sắc này đã tồn tại trong các biến thể khác!");
+        showNotification(
+          "error",
+          "Lỗi",
+          "Màu sắc này đã tồn tại trong các biến thể khác!"
+        );
         return;
       }
     } else if (key === "basePrice") {
-      newVariants[index][key] = value === "" || value === undefined ? 0 : Number(value);
+      newVariants[index][key] =
+        value === "" || value === undefined ? 0 : Number(value);
     } else if (key === "discount") {
-      newVariants[index][key] = value === "" || value === undefined ? undefined : Number(value);
+      newVariants[index][key] =
+        value === "" || value === undefined ? undefined : Number(value);
     }
     setVariants(newVariants);
   };
@@ -141,7 +188,8 @@ const ProductUpdate = () => {
     if (key === "specification" || key === "value") {
       subVariants[subIndex][key] = value as string;
     } else if (key === "additionalPrice" || key === "quantity") {
-      subVariants[subIndex][key] = value === "" || value === undefined ? 0 : Number(value);
+      subVariants[subIndex][key] =
+        value === "" || value === undefined ? 0 : Number(value);
     }
     updatedVariants[variantIndex].subVariants = subVariants;
     setVariants(updatedVariants);
@@ -154,7 +202,11 @@ const ProductUpdate = () => {
     const colors = variants.map((variant) => variant.color);
     const hasDuplicates = colors.length !== new Set(colors).size;
     if (hasDuplicates) {
-      showNotification("error", "Lỗi", "Có màu sắc trùng lặp trong các biến thể!");
+      showNotification(
+        "error",
+        "Lỗi",
+        "Có màu sắc trùng lặp trong các biến thể!"
+      );
       setLoading(false);
       return;
     }
@@ -162,13 +214,23 @@ const ProductUpdate = () => {
     // Validate subVariants
     for (const variant of variants) {
       if (variant.subVariants.length === 0) {
-        showNotification("error", "Lỗi", `Biến thể ${variant.color} phải có ít nhất một sub-variant!`);
+        showNotification(
+          "error",
+          "Lỗi",
+          `Biến thể ${variant.color} phải có ít nhất một sub-variant!`
+        );
         setLoading(false);
         return;
       }
-      const subVariantKeys = variant.subVariants.map((sv) => `${sv.specification}-${sv.value}`);
+      const subVariantKeys = variant.subVariants.map(
+        (sv) => `${sv.specification}-${sv.value}`
+      );
       if (subVariantKeys.length !== new Set(subVariantKeys).size) {
-        showNotification("error", "Lỗi", `Có sub-variant trùng lặp trong biến thể ${variant.color}!`);
+        showNotification(
+          "error",
+          "Lỗi",
+          `Có sub-variant trùng lặp trong biến thể ${variant.color}!`
+        );
         setLoading(false);
         return;
       }
@@ -178,7 +240,9 @@ const ProductUpdate = () => {
       const newImageUrls = await uploadImages(files);
       const updatedImages = [...existingImages, ...newImageUrls];
 
-      const selectedCategory = category.find((cat) => cat._id === values.category);
+      const selectedCategory = category.find(
+        (cat) => cat._id === values.category
+      );
       if (!selectedCategory) {
         throw new Error("Selected category not found");
       }
@@ -201,12 +265,20 @@ const ProductUpdate = () => {
       console.log("Payload being sent:", JSON.stringify(payload, null, 2));
 
       await updateProduct(id, payload);
-      showNotification("success", "Thành công", "Cập nhật sản phẩm thành công!");
+      showNotification(
+        "success",
+        "Thành công",
+        "Cập nhật sản phẩm thành công!"
+      );
       setFiles([]);
       navigate("/admin/dashboard", { state: { shouldRefetch: true } });
     } catch (error) {
       console.error("Error updating product:", error);
-      showNotification("error", "Lỗi", "Không thể cập nhật sản phẩm, vui lòng thử lại!");
+      showNotification(
+        "error",
+        "Lỗi",
+        "Không thể cập nhật sản phẩm, vui lòng thử lại!"
+      );
     } finally {
       setLoading(false);
     }
@@ -225,21 +297,55 @@ const ProductUpdate = () => {
             {/* Left Column */}
             <div className="flex-1 space-y-6">
               <div>
-                <label className="text-lg font-semibold text-gray-800">Mã sản phẩm</label>
-                <Form.Item name="masp" rules={[{ required: true, message: "Bắt buộc nhập mã sản phẩm!" }]}>
-                  <Input placeholder="Nhập mã sản phẩm" className="text-gray-700 p-4 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none" />
+                <label className="text-lg font-semibold text-gray-800">
+                  Mã sản phẩm
+                </label>
+                <Form.Item
+                  name="masp"
+                  rules={[
+                    { required: true, message: "Bắt buộc nhập mã sản phẩm!" },
+                  ]}
+                >
+                  <Input
+                    placeholder="Nhập mã sản phẩm"
+                    className="text-gray-700 p-4 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none"
+                  />
                 </Form.Item>
               </div>
               <div>
-                <label className="text-lg font-semibold text-gray-800">Tên sản phẩm</label>
-                <Form.Item name="name" rules={[{ required: true, message: "Bắt buộc nhập tên sản phẩm!" }]}>
-                  <Input placeholder="Nhập tên sản phẩm" className="text-gray-700 p-4 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none" />
+                <label className="text-lg font-semibold text-gray-800">
+                  Tên sản phẩm
+                </label>
+                <Form.Item
+                  name="name"
+                  rules={[
+                    { required: true, message: "Bắt buộc nhập tên sản phẩm!" },
+                  ]}
+                >
+                  <Input
+                    placeholder="Nhập tên sản phẩm"
+                    className="text-gray-700 p-4 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none"
+                  />
                 </Form.Item>
               </div>
               <div>
-                <label className="text-lg font-semibold text-gray-800">Mô tả sản phẩm</label>
-                <Form.Item name="moTa" rules={[{ required: true, message: "Bắt buộc nhập mô tả sản phẩm!" }]}>
-                  <Input.TextArea placeholder="Nhập mô tả sản phẩm" className="text-gray-700 p-4 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none" rows={5} />
+                <label className="text-lg font-semibold text-gray-800">
+                  Mô tả sản phẩm
+                </label>
+                <Form.Item
+                  name="moTa"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Bắt buộc nhập mô tả sản phẩm!",
+                    },
+                  ]}
+                >
+                  <Input.TextArea
+                    placeholder="Nhập mô tả sản phẩm"
+                    className="text-gray-700 p-4 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none"
+                    rows={5}
+                  />
                 </Form.Item>
               </div>
             </div>
@@ -247,31 +353,72 @@ const ProductUpdate = () => {
             {/* Right Column */}
             <div className="flex-1 space-y-6">
               <div>
-                <label className="text-lg font-semibold text-gray-800">Ảnh sản phẩm</label>
+                <label className="text-lg font-semibold text-gray-800">
+                  Ảnh sản phẩm
+                </label>
                 <div className="flex flex-wrap gap-4">
                   {existingImages.map((preview, index) => (
                     <div key={index} className="relative w-28 h-28">
-                      <img src={preview} alt={`Preview ${index}`} className="w-full h-full object-cover rounded-lg shadow-md" />
-                      <button onClick={() => handleRemoveImage(preview)} className="absolute top-0 right-0 bg-red-600 text-white text-xs p-2 rounded-full shadow-md">x</button>
+                      <img
+                        src={preview}
+                        alt={`Preview ${index}`}
+                        className="w-full h-full object-cover rounded-lg shadow-md"
+                      />
+                      <button
+                        onClick={() => handleRemoveImage(preview)}
+                        className="absolute top-0 right-0 bg-red-600 text-white text-xs p-2 rounded-full shadow-md"
+                      >
+                        x
+                      </button>
                     </div>
                   ))}
                 </div>
-                <Input type="file" multiple onChange={handleFileChange} className="p-4 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none" />
+                <Input
+                  type="file"
+                  multiple
+                  onChange={handleFileChange}
+                  className="p-4 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none"
+                />
               </div>
               <div>
-                <label className="text-lg font-semibold text-gray-800">Danh mục</label>
-                <Form.Item name="category" rules={[{ required: true, message: "Vui lòng chọn danh mục!" }]}>
-                  <Select className="w-full rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600" placeholder="Chọn danh mục">
+                <label className="text-lg font-semibold text-gray-800">
+                  Danh mục
+                </label>
+                <Form.Item
+                  name="category"
+                  rules={[
+                    { required: true, message: "Vui lòng chọn danh mục!" },
+                  ]}
+                >
+                  <Select
+                    className="w-full rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600"
+                    placeholder="Chọn danh mục"
+                  >
                     {activeCategories.map((categoryID: Icategory) => (
-                      <Select.Option key={categoryID._id} value={categoryID._id}>{categoryID.name}</Select.Option>
+                      <Select.Option
+                        key={categoryID._id}
+                        value={categoryID._id}
+                      >
+                        {categoryID.name}
+                      </Select.Option>
                     ))}
                   </Select>
                 </Form.Item>
               </div>
               <div>
-                <label className="text-lg font-semibold text-gray-800">Thương hiệu</label>
-                <Form.Item name="brand" rules={[{ required: true, message: "Bắt buộc nhập thương hiệu!" }]}>
-                  <Input placeholder="Nhập thương hiệu" className="text-gray-700 p-4 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none" />
+                <label className="text-lg font-semibold text-gray-800">
+                  Thương hiệu
+                </label>
+                <Form.Item
+                  name="brand"
+                  rules={[
+                    { required: true, message: "Bắt buộc nhập thương hiệu!" },
+                  ]}
+                >
+                  <Input
+                    placeholder="Nhập thương hiệu"
+                    className="text-gray-700 p-4 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none"
+                  />
                 </Form.Item>
               </div>
             </div>
@@ -279,14 +426,18 @@ const ProductUpdate = () => {
 
           {/* Variants Section */}
           <div className="mt-6">
-            <h3 className="text-lg font-semibold text-gray-800">Biến thể sản phẩm</h3>
+            <h3 className="text-lg font-semibold text-gray-800">
+              Biến thể sản phẩm
+            </h3>
             {variants.map((variant, variantIndex) => (
               <div key={variantIndex} className="mb-6 border p-4 rounded-lg">
                 <div className="grid grid-cols-4 gap-4 mb-4 items-center">
                   <Select
                     placeholder="Chọn màu"
                     value={variant.color}
-                    onChange={(value) => handleVariantChange(variantIndex, "color", value)}
+                    onChange={(value) =>
+                      handleVariantChange(variantIndex, "color", value)
+                    }
                     className="w-full h-12 rounded-lg border-2 border-gray-300"
                     options={[
                       { value: "Red", label: "🔴 Đỏ" },
@@ -300,58 +451,115 @@ const ProductUpdate = () => {
                     type="number"
                     placeholder="Giá cơ bản"
                     value={variant.basePrice}
-                    onChange={(e) => handleVariantChange(variantIndex, "basePrice", e.target.value)}
+                    onChange={(e) =>
+                      handleVariantChange(
+                        variantIndex,
+                        "basePrice",
+                        e.target.value
+                      )
+                    }
                     className="p-3 h-12 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600"
                   />
                   <Input
                     type="number"
                     placeholder="Giảm giá (VND)"
                     value={variant.discount}
-                    onChange={(e) => handleVariantChange(variantIndex, "discount", e.target.value)}
+                    onChange={(e) =>
+                      handleVariantChange(
+                        variantIndex,
+                        "discount",
+                        e.target.value
+                      )
+                    }
                     className="p-3 h-12 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600"
                   />
-                  <Button type="default" danger onClick={() => removeVariant(variantIndex)}>
+                  <Button
+                    type="default"
+                    danger
+                    onClick={() => removeVariant(variantIndex)}
+                  >
                     Xóa biến thể
                   </Button>
                 </div>
 
                 {/* Sub-Variants */}
                 <div className="ml-4">
-                  <h4 className="text-md font-medium text-gray-700">Biến thể con:</h4>
+                  <h4 className="text-md font-medium text-gray-700">
+                    Biến thể con:
+                  </h4>
                   {variant.subVariants.map((subVariant, subIndex) => (
-                    <div key={subIndex} className="grid grid-cols-5 gap-4 mb-2 items-center">
+                    <div
+                      key={subIndex}
+                      className="grid grid-cols-5 gap-4 mb-2 items-center"
+                    >
                       <Input
                         placeholder="Thông số (e.g., Storage)"
                         value={subVariant.specification}
-                        onChange={(e) => handleSubVariantChange(variantIndex, subIndex, "specification", e.target.value)}
+                        onChange={(e) =>
+                          handleSubVariantChange(
+                            variantIndex,
+                            subIndex,
+                            "specification",
+                            e.target.value
+                          )
+                        }
                         className="p-3 h-12 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600"
                       />
                       <Input
                         placeholder="Giá trị (e.g., 128GB)"
                         value={subVariant.value}
-                        onChange={(e) => handleSubVariantChange(variantIndex, subIndex, "value", e.target.value)}
+                        onChange={(e) =>
+                          handleSubVariantChange(
+                            variantIndex,
+                            subIndex,
+                            "value",
+                            e.target.value
+                          )
+                        }
                         className="p-3 h-12 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600"
                       />
                       <Input
                         type="number"
                         placeholder="Giá thêm (VND)"
                         value={subVariant.additionalPrice}
-                        onChange={(e) => handleSubVariantChange(variantIndex, subIndex, "additionalPrice", e.target.value)}
+                        onChange={(e) =>
+                          handleSubVariantChange(
+                            variantIndex,
+                            subIndex,
+                            "additionalPrice",
+                            e.target.value
+                          )
+                        }
                         className="p-3 h-12 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600"
                       />
                       <Input
                         type="number"
                         placeholder="Số lượng"
                         value={subVariant.quantity}
-                        onChange={(e) => handleSubVariantChange(variantIndex, subIndex, "quantity", e.target.value)}
+                        onChange={(e) =>
+                          handleSubVariantChange(
+                            variantIndex,
+                            subIndex,
+                            "quantity",
+                            e.target.value
+                          )
+                        }
                         className="p-3 h-12 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-600"
                       />
-                      <Button type="default" danger onClick={() => removeSubVariant(variantIndex, subIndex)}>
+                      <Button
+                        type="default"
+                        danger
+                        onClick={() => removeSubVariant(variantIndex, subIndex)}
+                      >
                         Xóa
                       </Button>
                     </div>
                   ))}
-                  <Button type="dashed" onClick={() => addSubVariant(variantIndex)} className="mt-2">
+                  <Button
+                    type="dashed"
+                    onClick={() => addSubVariant(variantIndex)}
+                    className="mt-2"
+                  >
                     Thêm Sub-Variant
                   </Button>
                 </div>
