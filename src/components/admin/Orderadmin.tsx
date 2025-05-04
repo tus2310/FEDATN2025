@@ -487,11 +487,11 @@ const Order = (props: Props) => {
               <div className="space-y-2 text-gray-700">
                 <p>
                   <span className="font-semibold"> Tài khoản:</span>{" "}
-                  {user?.info?.name || "Không có dữ liệu"}
+                  {selectedOrder?.userId?.name || "Không có dữ liệu"}
                 </p>
                 <p>
                   <span className="font-semibold">Email:</span>{" "}
-                  {user?.info?.email || "Không có dữ liệu"}
+                  {selectedOrder?.userId?.email || "Không có dữ liệu"}
                 </p>
               </div>
             </div>
