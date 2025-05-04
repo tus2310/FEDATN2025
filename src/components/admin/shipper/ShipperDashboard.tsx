@@ -41,10 +41,10 @@ const ShipperDashboard = (props: Props) => {
     (order) => order.status === "failed"
   ).length;
   const totalOrders = orders.length;
-  // const cancelledOrder = orders.filter(
-  //   (order) => order.status === "failed"
-  // ).length;
-  // const totalOrder = orders.length;
+
+  const handleFilterChange = (status: string) => {
+    setFilter(status);
+  };
 
   return (
     <div
@@ -64,14 +64,14 @@ const ShipperDashboard = (props: Props) => {
             <h2 className="text-xl font-semibold">Tổng đơn hàng</h2>
             <p className="text-3xl font-bold mt-2">{totalOrders}</p>
           </div>
-          {/* <div className="bg-yellow-500 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-yellow-500 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
             <h2 className="text-xl font-semibold">Đang xử lý đơn hàng</h2>
             <p className="text-3xl font-bold mt-2">{pendingOrders}</p>
-          </div> */}
-          {/* <div className="bg-green-500 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+          </div>
+          <div className="bg-green-500 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
             <h2 className="text-xl font-semibold">Đơn hàng đã giao</h2>
             <p className="text-3xl font-bold mt-2">{deliveredOrders}</p>
-          </div> */}
+          </div>
           <div className="bg-red-500 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
             <h2 className="text-xl font-semibold">Đơn hàng thất bại</h2>
             <p className="text-3xl font-bold mt-2">{cancelledOrders}</p>
