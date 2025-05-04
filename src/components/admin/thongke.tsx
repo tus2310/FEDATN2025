@@ -299,7 +299,7 @@ const Thongke = () => {
             <Statistic
               title="Tổng doanh thu"
               value={stats?.revenue.totalRevenue}
-              precision={2}
+              precision={0}
               prefix={<DollarOutlined />}
               suffix="VND"
               valueStyle={{ color: "#3f8600" }}
