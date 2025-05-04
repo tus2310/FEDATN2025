@@ -20,7 +20,7 @@ const Updatecategory = (props: Props) => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // Utility function for notifications
+  // Utility function for notifications-- thong bao
   const showNotification = (
     type: "success" | "error",
     message: string,

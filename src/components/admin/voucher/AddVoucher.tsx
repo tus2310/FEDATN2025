@@ -42,21 +42,28 @@ const AddVoucher = (props: Props) => {
       };
 
       // Check ma trung lap
+      const isExist = vouchers.find(
+        (voucher) => voucher.code === payload.code.trim()
+      );
+      if (isExist) {
+        message.error("Mã giảm giá đã tồn tại");
+        return;
+      }
 
       const voucher = await addVoucher(payload);
 
-    //   if (voucher) {
-    //     successMessage();
-    //     message.success("Đã thêm phiếu giảm giá thành công!");
-    //     form.resetFields();
-    //     navigate("/admin/Vouchers"); // Navigate phieu giam gia list
-    //   } else {
-    //     message.error("Không thể thêm phiếu giảm giá");
-    //   }
-    // } catch (error) {
-    //   console.error("Lỗi khi thêm phiếu giảm giá: ", error);
-    //   message.error("Server error: Không thể thêm phiếu giảm giá.");
-    // }
+      if (voucher) {
+        successMessage();
+        message.success("Đã thêm phiếu giảm giá thành công!");
+        form.resetFields();
+        navigate("/admin/Vouchers"); // Navigate phieu giam gia list
+      } else {
+        message.error("Không thể thêm phiếu giảm giá");
+      }
+    } catch (error) {
+      console.error("Lỗi khi thêm phiếu giảm giá: ", error);
+      message.error("Server error: Không thể thêm phiếu giảm giá.");
+    }
   };
 
   return (

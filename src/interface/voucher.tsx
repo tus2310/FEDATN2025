@@ -3,6 +3,7 @@ export interface IVoucher {
   code: string;
   discountAmount: number;
   expirationDate: Date;
+  isActive: boolean;
   quantity: number;
   createdAt?: Date; // Optional as it will be auto-generated
 }

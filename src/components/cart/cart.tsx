@@ -13,7 +13,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// Utility function to extract productId as a string
+// Hàm tiện ích để trích xuất productId dưới dạng chuỗi
 const getProductIdString = (productId: string | { _id: string }): string => {
   return typeof productId === "string" ? productId : productId._id.toString();
 };
@@ -36,13 +36,13 @@ const Cart = () => {
       if (data && Array.isArray(data.items)) {
         setCartItems(data.items);
       } else {
-        setCartItems([]); // Fallback to empty array if data.items is invalid
+        setCartItems([]); // Quay lại mảng trống nếu data.items không hợp lệ
         setError("Cart data is invalid.");
       }
     } catch (err) {
       setError("Failed to fetch cart data.");
       console.error("Error fetching cart data:", err);
-      setCartItems([]); // Fallback to empty array on error
+      setCartItems([]); // Quay lại mảng trống khi có lỗi
     } finally {
       setLoading(false);
     }
@@ -103,15 +103,15 @@ const Cart = () => {
 
   const checkForCartChanges = async () => {
     try {
-      console.log("Initiating checkout check for userId:", userId);
-      console.log("Cart items before checkout check:", cartItems);
+      console.log("Khởi tạo kiểm tra thanh toán cho userId:", userId);
+      console.log("Các mục trong giỏ hàng trước khi kiểm tra:", cartItems);
       const response = await axios.post("http://localhost:28017/checkout", {
         userId,
       });
-      console.log("Checkout response:", response.data);
+      console.log("Phản hồi từ kiểm tra thanh toán:", response.data);
       if (response.status === 400 && response.data.message) {
         console.log(
-          "Cart changes detected, resetting cart:",
+          "Phát hiện thay đổi trong giỏ hàng, đặt lại giỏ hàng:",
           response.data.message
         );
         toast.error(response.data.message);
@@ -119,15 +119,18 @@ const Cart = () => {
         return "cartChanged";
       }
     } catch (error: any) {
-      console.error("Error during cart check:", error.response?.data || error);
+      console.error(
+        "Lỗi trong quá trình kiểm tra giỏ hàng:",
+        error.response?.data || error
+      );
       if (error.response?.status === 400 && error.response.data?.message) {
         console.log(
-          "Cart changes detected in error catch, resetting cart:",
+          "Phát hiện thay đổi trong giỏ hàng qua lỗi, đặt lại giỏ hàng:",
           error.response.data.message
         );
         toast.error(error.response.data.message);
         setCartItems([]);
-        return "cartChanged";
+        return "cartChanged"; //cart thay doi
       }
     }
     return "noChange";
@@ -147,7 +150,7 @@ const Cart = () => {
   const handleRemove = async (item: CartItem) => {
     try {
       if (!userId) {
-        toast.error("User ID is missing. Please log in again.");
+        toast.error("Không tìm thấy ID người dùng. Vui lòng đăng nhập lại.");
         return;
       }
       const productId = getProductIdString(item.productId);
@@ -164,7 +167,7 @@ const Cart = () => {
       toast.success("Sản phẩm đã được xóa khỏi giỏ hàng.");
       window.dispatchEvent(new Event("cartUpdated"));
     } catch (error) {
-      console.error("Failed to remove item:", error);
+      console.error("Không thể xóa sản phẩm:", error);
       toast.error("Đã xảy ra lỗi khi xóa sản phẩm.");
       setCartItems([]);
     }
@@ -224,10 +227,10 @@ const Cart = () => {
         toast.success("Số lượng sản phẩm đã được cập nhật.");
         window.dispatchEvent(new Event("cartUpdated"));
       } else {
-        throw new Error("Received invalid response, expected JSON.");
+        throw new Error("Nhận được phản hồi không hợp lệ, mong đợi JSON.");
       }
     } catch (error) {
-      console.error("Failed to increase quantity:", error);
+      console.error("Không thể tăng số lượng:", error);
       toast.error("Đã xảy ra lỗi, vui lòng thử lại sau.");
     }
   };
@@ -264,7 +267,7 @@ const Cart = () => {
         handleRemove(item);
       }
     } catch (error) {
-      console.error("Failed to decrease quantity:", error);
+      console.error("Không thể giảm số lượng:", error);
       toast.error("Đã xảy ra lỗi khi giảm số lượng.");
     }
   };
@@ -294,34 +297,36 @@ const Cart = () => {
 
       if (!active) {
         toast.error(
-          `Your account is deactivated. Reason: ${reason || "Not specified"}`
+          `Tài khoản của bạn đã bị vô hiệu hóa. Lý do: ${
+            reason || "Không xác định"
+          }`
         );
         return;
       }
 
       const cartCheckResult = await checkForCartChanges();
-      console.log("Cart check result:", cartCheckResult);
+      console.log("Kết quả kiểm tra giỏ hàng:", cartCheckResult);
       if (cartCheckResult === "cartChanged") {
-        console.log("Cart changed, stopping checkout process");
+        console.log("Giỏ hàng đã thay đổi, dừng quá trình thanh toán");
         toast.warning(
-          "Items in your cart have changed. Please review your cart."
+          "Các mục trong giỏ hàng của bạn đã thay đổi. Vui lòng kiểm tra lại giỏ hàng."
         );
         return;
       }
 
       if (selectedItems.length === 0) {
-        toast.info("Please select at least one item to checkout.");
+        toast.info("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
         return;
       }
 
       console.log(
-        "Proceeding to order page with selected items:",
+        "Chuyển đến trang đặt hàng với các mục đã chọn:",
         selectedItems
       );
       navigate("/order", { state: { selectedItems } });
     } catch (error) {
-      console.error("Failed to check user status:", error);
-      toast.error("An error occurred while checking user status.");
+      console.error("Không thể kiểm tra trạng thái người dùng:", error);
+      toast.error("Đã xảy ra lỗi khi kiểm tra trạng thái người dùng.");
     }
   };
 

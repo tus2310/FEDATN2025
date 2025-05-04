@@ -16,16 +16,20 @@ export interface Icart {
   }[];
 }
 
+interface PopulatedProduct {
+  _id: string;
+}
+
 export interface CartItem {
-  productId: string;
+  productId: string | PopulatedProduct;
   name: string;
   price: number;
-  quantity: number;
   img: string;
-  color?: string;
+  quantity: number;
+  color: string;
   subVariant?: {
-    specification: string; // e.g., "Storage"
-    value: string; // e.g., "128GB"
+    specification: string;
+    value: string;
   };
 }
 

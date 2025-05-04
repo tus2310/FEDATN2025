@@ -16,24 +16,28 @@ const Listcategory = (props: Props) => {
   const [categories, setCategory] = useState<Icategory[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
   const navigate = useNavigate();
 
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await getAllCategories(); // Lấy tất cả các danh mục, không có bộ lọc trạng thái
+      setCategory(data.reverse());
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      setError("Không thể tải danh mục. Vui lòng thử lại sau.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const data = await getAllCategories();
-        setCategory(data.reverse());
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    fetchCategories();
   }, []);
 
   const handleDeactivateCategory = async (id: string) => {
@@ -47,6 +51,7 @@ const Listcategory = (props: Props) => {
       setCategory(updatedCategories);
     } catch (error) {
       console.error("Error deactivating category:", error);
+      setError("Không thể vô hiệu hóa danh mục. Vui lòng thử lại.");
     }
   };
 
@@ -61,6 +66,7 @@ const Listcategory = (props: Props) => {
       setCategory(updatedCategories);
     } catch (error) {
       console.error("Error activating category:", error);
+      setError("Không thể kích hoạt danh mục. Vui lòng thử lại.");
     }
   };
 
@@ -85,6 +91,14 @@ const Listcategory = (props: Props) => {
     "Tên danh mục": category.name,
     "Trạng thái": category.status === "active" ? "Hoạt động" : "Vô hiệu hóa",
   }));
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -111,7 +125,7 @@ const Listcategory = (props: Props) => {
           placeholder="Tìm kiếm danh mục"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-400 ml-4"
         />
       </div>
 
