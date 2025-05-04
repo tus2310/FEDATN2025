@@ -21,7 +21,7 @@ export interface Iproduct {
   img: string[];
   moTa: string;
   brand: string;
-  category: Icategory;
+  category:  Icategory; // Use the full ICategory interface with status
   status: boolean;
   variants: IVariant[];
   discountCode?: string;

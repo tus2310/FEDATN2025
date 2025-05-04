@@ -3,37 +3,32 @@ import { axiosservice } from "../config/API";
 import { IVariant, IProductLite } from "../interface/products";
 import axios from "axios";
 
-export const getAllproducts = async ({
-  limit = 10,
-  page = 1,
-  admin = "",
-  category,
-}: {
+interface ProductQueryParams {
   limit: number;
   page: number;
-  admin?: string;
   category?: string;
-  variants?: IVariant[];
-}) => {
+  admin?: string;
+}
+
+export const getAllproducts = async (params: ProductQueryParams) => {
   try {
-    let url = `product-test?page=${page}&limit=${limit}&sort=-createdAt`;
-
-    if (admin === "true") {
-      url += `&admin=${admin}`;
-    }
-
+    const { limit, page, category, admin } = params;
+    let url = `/product-test?limit=${limit}&page=${page}`;
+    
     if (category) {
       url += `&category=${category}`;
     }
+    
+    // Apply active category/product filters unless admin is true
+    if (admin !== "true") {
+      url += `&categoryStatus=active&status=true`;
+    }
 
-    const { data } = await axiosservice.get(
-      admin === "true"
-        ? `product-test?page=${page}&limit=${limit}&admin=${admin}`
-        : `product-test?page=${page}&limit=${limit}`
-    );
+    const { data } = await axiosservice.get(url);
     return data;
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching products:", error);
+    throw error;
   }
 };
 
@@ -42,7 +37,8 @@ export const getProductByID = async (id?: string) => {
     const { data } = await axiosservice.get(`/product/${id}`);
     return data;
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching product by ID:", error);
+    throw error;
   }
 };
 
@@ -65,7 +61,8 @@ export const updateProduct = async (id?: string, product?: IProductLite) => {
     const { data } = await axiosservice.put(`product/${id}`, product);
     return data;
   } catch (error) {
-    console.log(error);
+    console.error("Error updating product:", error);
+    throw error;
   }
 };
 
@@ -74,7 +71,8 @@ export const DeleteProduct = async (pid: string) => {
     const { data } = await axiosservice.delete(`/product/${pid}`);
     return data;
   } catch (error) {
-    console.log(error);
+    console.error("Error deleting product:", error);
+    throw error;
   }
 };
 
@@ -84,7 +82,8 @@ export const ActivateProduct = async (pid: string) => {
     const { data } = await axiosservice.put(`/product/activate/${pid}`);
     return data;
   } catch (error) {
-    console.log("Error activating product:", error);
+    console.error("Error activating product:", error);
+    throw error;
   }
 };
 
@@ -94,19 +93,22 @@ export const DeactivateProduct = async (pid: string) => {
     const { data } = await axiosservice.put(`/product/deactivate/${pid}`);
     return data;
   } catch (error) {
-    console.log("Error deactivating product:", error);
+    console.error("Error deactivating product:", error);
+    throw error;
   }
 };
 
-// hàm lọc sản phẩm theo danh mục
+// Hàm lọc sản phẩm theo danh mục
 export const getProductsByCategory = async (categoryId: string) => {
   try {
     const { data } = await axiosservice.get(`/products/category/${categoryId}`);
     return data;
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching products by category:", error);
+    throw error;
   }
 };
+
 export const calculateTotalQuantity = (variants?: IVariant[]): number => {
   if (!variants || variants.length === 0) return 0;
   return variants.reduce((total, variant) => {
@@ -117,6 +119,7 @@ export const calculateTotalQuantity = (variants?: IVariant[]): number => {
     return total + subVariantTotal;
   }, 0);
 };
+
 // service/products.ts
 export const checkProductExistence = async (masp: string, name: string) => {
   try {
