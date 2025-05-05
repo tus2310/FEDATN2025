@@ -196,7 +196,7 @@ const OrdersShipper = (props: Props) => {
       }
     } catch (err: any) {
       console.error("Error confirming delivery:", err);
-      setError(err.response?.data?.message || "Không thể xác nhận giao hàng");
+      setError(err.response?.data?.message || "");
     } finally {
       setIsLoading(false);
     }
